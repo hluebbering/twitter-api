@@ -1,0 +1,490 @@
+---
+title: "Querying Twitter API Data in Spark"
+subtitle: "System Investigation Project - Part 4"
+author: "Hannah Luebbering"
+date: "June 07, 2022"
+output:
+  xaringan::moon_reader:
+    css: "assets/main3.css"
+# knit: pagedown::chrome_print
+knit: (function(inputFile, encoding) {rmarkdown::render(inputFile, encoding = encoding, output_dir = "docs") })
+bibliography: "assets/references.bib"
+nocite: "@*"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.align = "center")
+library(dplyr)
+library(twitteR)
+library(tidyverse)
+library(kableExtra)
+library(lubridate)
+library(scales)
+library(tidyr)
+library(ggplot2)
+library(tidytext)
+library(quanteda)
+library(hrbrthemes)
+library(httr)
+library(devtools)
+library(plyr)												
+library(readr)
+library(plotly)
+library(rtweet)
+library(syuzhet)
+library(textfeatures)
+library(gridExtra)
+library(patchwork)
+library(ggpubr)
+library(pagedown)
+source("data.R")
+```
+
+
+
+<script src="min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+## Introduction. 
+
+For the final project, I implement several queries over the selected data set on the Spark system. The implementation provides a demonstration of the implementation and code. 
+
+[Link to Video](https://drive.google.com/file/d/1w6Dsk1ibFuVRmypqrdXuXlqmqpObAz5L/view?usp=sharing)
+
+<!-- This demonstration includes a recorded video (5 minutes) and a set of slides to accompany the video. The slides document the project's code, data storage and implementation. The goal is to communicate what the project accomplished.  -->
+
+
+
+
+### System Overview
+
+
+
+
+<div class = "datasource2">
+
+<code>Apache Spark</code> is an open-source engine for large-scale parallel data processing known for its speed, ease of use, and cutting-edge analytics. It provides high-level APIs in general-purpose programming languages such as Scala, Python, and R, as well as an optimization engine that supports standard data analysis methods. It also supports many built-in libraries that fulfill users' needs, including Spark SQL for DataFrames, Spark pandas API for pandas workloads, MLlib for machine learning, Graphx for graph visualizations, and Structured Streaming for workflow processing. 
+
+</div>
+
+
+<div class = "datasource2">
+
+<code>Azure Databricks</code> is an analytics platform based on Microsoft Azure cloud services, providing the latest versions of Apache Spark and allowing consistent integration with open source libraries. Built with Spark capabilities, Azure Databricks provides a cloud platform with interactive workspaces and fully managed Spark clusters. Such capabilities allow users to create and configure clusters in seconds, gain instant access to Apache Spark capabilities, and build quickly via Azure.
+
+</div>
+
+
+---
+
+
+
+### Data Description
+
+
+<div class = "roundedlist22">
+
+<span class="myhighlight">Twitter (Elon Musk 2015-2022): </span> Dataset of Elon Musk’s most recent Tweets during 2015-2022, stored in CSV format, where each row represents a separate tweet object. All Tweets are collected, parsed, and plotted using the Twitter API and <code>rtweet</code> package in R. In total, there are more than ten-thousand tweets in this dataset, including retweets, replies, and quotes. All objects are to go into a single database.
+
+</div>
+
+
+
+```{r, out.width="100%"}
+kable(dfvar, escape = FALSE, col.names = NULL) %>% kable_styling(font_size = 15, bootstrap_options = c("striped", "hover"), html_font = "Roboto Condensed") %>% column_spec(c(1, 3, 5, 7), extra_css = c("font-weight: 700; font-family: Roboto; font-size: 16px;"), width = "1cm") %>% 
+  add_header_above(c("Data Set Variables" = 8), align = "l", extra_css = c("text-transform: uppercase;"), font_size = 15) 
+
+
+```
+
+
+
+
+---
+
+
+<span class="myhighlight2">Data Set Preview: </span>
+
+```{r}
+tweetDF2 <- tweetDF %>% select(-status_id, -symbols)
+kable(tweetDF2, escape = F) %>% 
+  kable_styling(font_size = 13, html_font = "Roboto Condensed", bootstrap_options = c("striped")) %>%
+  column_spec(c(3:4), width_max = "2.5cm", extra_css = c("font-size: 11px;")) %>%
+  column_spec(1, extra_css = c("font-size: 11.25px;"), width_min = "2cm") %>%
+  row_spec(0, extra_css = c("font-weight: 700; font-size: 11px; padding: 3.5pt; text-transform: lowercase;"))
+```
+
+
+
+---
+
+
+## Project Description 
+
+
+For this project, I set out to explore and answer the following questions and ideas about the selected Twitter data set. 
+
+
+<div class = "datasource2">
+<ol>
+<li><code>(path finding)</code> Display the thread (mentions) of tweets (the tweet, time, id, in mention to id, user name with their screen name) posted by Elon Musk with screen_name in the order in which they were posted.</li>
+<li><code>(hashtags)</code> Which hashtags does Musk use the most, and how many tweets are associated with these hashtags?</li>
+<li><code>(topics)</code> What word does Musk mention the most in his tweets? What company products does Musk mention the most in his tweets? Products include Falcon 9, Starlink Satellites, Model 3 cars, etc. </li>
+<li><code>(trending)</code> Are there any trends of what Musk tweets about the company?</li>
+<li><code>(nature of engagement)</code> What is the percentage of different types of tweets (simple tweet, reply, retweet, quoted tweet) to their overall number of tweets?</li>
+</ol>
+
+
+</div>
+
+
+
+
+---
+
+
+## Part 4. Implementation 
+
+
+
+<span class="myhighlight2">Building a Databricks workspace using an Apache Spark cluster. </span>
+
+First, we create a Databricks workspace from the Azure portal and then launch the workspace, which redirects us to the interactive Databricks portal. We create a Spark cluster from the Databricks interactive workspace and configure a notebook on the cluster. In the notebook, we use <code>PySpark</code> to read data from a dataset into a Spark DataFrame. Using the Spark DataFrame, we can run a Spark SQL job to query the data.
+
+
+<div class = "datasource">
+
+```{r, out.width="50%", fig.show='hold', fig.align='default'}
+knitr::include_graphics("assets/workspace.jpeg")
+knitr::include_graphics("assets/myCluster.jpg")
+```
+
+</div>
+
+```python
+twitter_df = spark.read.csv(path = 'dbfs:/FileStore/dfclean.csv', 
+                            header = "true", multiLine = "true")
+# Register table so it is accessible via SQL Context
+twitter_df.createOrReplaceTempView('twitter_df')
+```
+
+
+
+---
+
+
+## Query 1. <code>(path finding)</code> 
+
+<div class = "roundedlist">
+Display the thread (mentions) of tweets (the tweet, time, id, in mention to id, user name with their screen name) posted by Elon Musk with screen_name in the order in which they were posted.
+</div>
+
+
+```python
+from pyspark.sql.functions import col
+
+mentionDF = spark.sql(
+  "SELECT screen_name, \
+          created_at, \
+          text, \
+          mentions_user_id, \
+          mentions_screen_name \
+  FROM twitter_df"
+)
+
+mentionDF.filter(col("mentions_user_id") != "NA") \
+    .write \
+    .format('csv') \
+    .mode('overwrite') \
+    .option("overwriteSchema", "true") \
+    .saveAsTable("mentionDF")
+
+mentionDF.createOrReplaceTempView('mentionDF')
+```
+
+---
+
+
+
+
+
+```python
+display(spark.read.table("mentionDF"))
+```
+
+
+
+```{r}
+reply.data <- tweets.clean %>% dplyr::filter(mentions_user_id != 'NA') %>% dplyr::select(screen_name, text, created_at, mentions_user_id, mentions_screen_name) %>% head(4)
+
+kable(reply.data, escape = FALSE) %>% kable_styling(font_size = 14, bootstrap_options = c("striped", "hover"), html_font = "Roboto Condensed")
+```
+
+
+
+<span class="myhighlight2">SQL: </span>
+
+```sql
+SELECT mentions_screen_name,
+  COUNT(*) AS n
+FROM mentionDF
+WHERE mentions_screen_name != 'NA'
+GROUP BY mentions_screen_name
+SORT BY n DESC;
+```
+
+
+---
+
+
+### Graphic Report 1.
+
+
+
+```{r, fig.show='hold', out.width="100%"}
+dfMent <- data.frame(dfMentions) %>% head(12)
+colnames(dfMent) <- c("mentions_screen_name", "Freq")
+
+plotMentions <- dfMent %>%
+  ggplot(aes(y = mentions_screen_name, x = Freq, fill = Freq)) +
+  geom_bar(stat = "identity", color = "black", cex = 0.25)  +
+  xlab(NULL) + ylab(NULL) +
+  theme_ipsum_rc(base_size = 9, plot_margin = margin(20,8,20,8),
+                  plot_title_size = 10) + 
+  theme(legend.position = "none")
+
+
+
+stable.p <- ggtexttable(dfMent, rows = NULL, 
+                        theme = ttheme("mBlue", base_size = 8))
+
+ggarr1 <- ggarrange(plotMentions, stable.p, widths = c(2, 1), heights = c(1, 1), labels = c("Top 12 Most Mentioned Twitter Users"), font.label = list(size = 10, family = "Roboto"))
+
+ragg::agg_png(filename = "assets/report1.png", width = 7087, height = 4895, units = "px", res = 900)
+ggarr1
+invisible(dev.off())
+knitr::include_graphics("assets/report1.png")
+
+```
+
+
+
+---
+
+
+## Query 2. <code>(hashtags)</code> 
+
+<div class = "roundedlist">
+Which hashtags does Musk use the most, and how many tweets are associated with these hashtags?
+</div>
+
+
+```python
+hashtagsDF = spark.sql("SELECT \
+  hashtags, \
+  COUNT(*) AS n \
+  FROM twitter_df \
+  GROUP BY hashtags")
+
+hashtagsDF.filter(col("hashtags") != "NA") \
+     .write \
+     .format('csv') \
+     .mode('overwrite') \
+     .option("overwriteSchema", "true") \
+     .saveAsTable("hashtagsDF")
+ 
+display(spark.read.table("hashtagsDF"))
+hashtagsDF.createOrReplaceTempView('hashtagsDF')
+```
+
+
+---
+
+
+### Graphic Report 2. 
+
+
+```{r, fig.show='hold', out.width="100%"}
+dfHashtags <- data.frame(dfHashtags) %>% head(12)
+colnames(dfHashtags) <- c("Hashtag", "Freq")
+
+plotHashtags <- dfHashtags %>%
+  ggplot(aes(y = Hashtag, x = Freq, fill = Freq)) +
+  geom_bar(stat = "identity", color = "black", cex = 0.25)  +
+  xlab(NULL) + ylab(NULL) +
+  theme_ipsum_rc(base_size = 9, plot_margin = margin(20,8,20,8),
+                  plot_title_size = 10) + 
+  theme(legend.position = "none")
+
+table.htags <- ggtexttable(dfHashtags, rows = NULL, theme = ttheme("mBlue", base_size = 8))
+
+ggarr2 <- ggarrange(plotHashtags, table.htags, widths = c(2, 1), heights = c(1, 1), labels = c("Top 12 Most Used Hashtags"), font.label = list(size = 10, family = "Roboto"))
+
+ragg::agg_png(filename = "assets/report2.png", width = 7087, height = 4595, units = "px", res = 900)
+ggarr2
+invisible(dev.off())
+knitr::include_graphics("assets/report2.png")
+
+```
+
+
+---
+
+
+## Query 3. <code>(topics)</code> 
+
+
+<div class = "roundedlist">
+What word does Musk mention the most in his tweets? What company products does Musk mention the most in his tweets?
+</div>
+
+
+```python
+import pyspark.sql.functions as f
+data_df = twitter_df.select('text', 'status_id', 'created_at')
+
+# Count and group word frequencies on text, when split by space comma
+
+data_df.withColumn('word', f.explode(f.split(f.col('text'), ' '))) \
+  .groupBy('word') \
+  .count() \
+  .sort('count', ascending=False) \
+  .show()
+```
+
+
+
+---
+
+
+
+### Graphic Report 3.
+
+
+```{r, out.width="100%"}
+dfSentWords <- data.frame(df.words) %>% head(15)
+ 
+
+plotWords <- dfSentWords %>%
+  ggplot(aes(y = reorder(word, -n), x = n, fill = n)) +
+  geom_histogram(stat = "identity", color = "black", cex = 0.25)  +
+  xlab(NULL) + ylab(NULL) +
+  theme_ipsum_rc(base_size = 9, plot_margin = margin(20,8,20,8),
+                  plot_title_size = 10) + 
+  theme(legend.position = "none")
+
+table.words <- ggtexttable(dfSentWords, rows = NULL, theme = ttheme("mBlue", base_size = 8))
+
+ggarr3 <- ggarrange(plotWords, table.words, widths = c(2, 1), heights = c(1, 1), labels = c("Top 15 Most Used Words"), font.label = list(size = 10, family = "Roboto"))
+
+ragg::agg_png(filename = "assets/report3.png", width = 7087, height = 4595, units = "px", res = 900)
+ggarr3
+invisible(dev.off())
+knitr::include_graphics("assets/report3.png")
+
+```
+
+---
+
+
+
+
+```{r, out.width="100%"}
+ggplotly(tt_sent)
+
+```
+
+
+
+
+---
+
+
+## Query 4. <code>(tweet trends)</code> 
+
+<div class = "roundedlist">
+Are there any trends of when Elon Musk tweets?
+</div>
+
+
+
+```python
+from pyspark.sql.types import DateType
+twitter_df.withColumn("created_at", twitter_df.created_at.cast(DateType()))
+```
+
+
+
+```sql
+SELECT WEEKDAY(created_at) as created_weekday, 
+COUNT(*) as n
+FROM twitter_df
+GROUP BY created_weekday
+ORDER BY created_weekday DESC
+```
+
+```{r, out.width="70%"}
+plot.weekday <- ggplot(dftweets, aes(x = week)) + geom_bar(stat = "count", width = 0.75, fill = "cornflowerblue", color = "navy") + theme_ipsum_rc(base_size = 8)
+
+
+ragg::agg_png(filename = "assets/report4.png", width = 6587, height = 3595, units = "px", res = 900)
+plot.weekday
+invisible(dev.off())
+knitr::include_graphics("assets/report4.png")
+```
+
+
+
+
+
+
+---
+
+
+
+## Conclusion 
+
+
+With Azure, we can run a Spark job on the Databricks Workspace using the Azure portal. In short, Azure allows us to create a Spark dataframe and then use SQL to query the data by configuring a notebook in Databricks and running a Spark SQL job on the data.
+
+The analytics platform includes an easy setup, streamlined workflow, and an integrated Azure Workspace, allowing users to work in a single, easy-to-use environment and quickly schedule Spark code developed on Apache Spark.
+
+
+An Azure Databricks table is a compiled collection of structured or unstructured data, and a Databricks database (also known as a schema) is a collection of these tables. We can store, filter, and execute any procedures supported by Apache Spark DataFrames on a table. We can query the table using Spark API and Spark SQL. 
+
+
+We use the Apache Spark DataFrame API in our Azure Databricks workspace to restructure and clean data. The Apache Spark DataFrame API provides many functions for manipulating data, such as selecting, filtering, joining, aggregating, etc. The DataFrame API seamlessly integrates operations with custom Python, SQL, Scala, and R code. In a Databricks workspace, we can load a data file, create a DataFrame, run SQL queries, and visualize the DataFrame results. 
+
+
+---
+
+
+
+## References
+
+
+```{r}
+library(RefManageR)
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear", # Bibliography style
+           max.names = 3, # Max author names displayed in bibliography
+           sorting = "nyt", #Name, year, title sorting
+           cite.style = "authoryear", # citation style
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("assets/references.bib", check = FALSE)
+```
+
+```{r refs, echo=FALSE, results="asis"}
+NoCite(myBib)
+PrintBibliography(myBib)
+
+```
+
+
+
+
