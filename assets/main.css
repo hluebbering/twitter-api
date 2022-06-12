@@ -15,11 +15,15 @@ h1.title {
 }
 
 h2 {
-    font-family: 'Roboto', sans-serif;
-    font-size: 22pt;
-    font-weight: 600;
-    letter-spacing: 0.75px;
+  font-weight: 600;
+    font-size: 18pt;
     text-transform: uppercase;
+    color: #0f141a;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 1px;
+    text-shadow: 0.5px 0.5px 0.5px rgb(0 0 0 / 20%);
+    font-family: 'Roboto', sans-serif;
+    
 }
 
 h3 {

@@ -231,7 +231,7 @@ Users can perform relational procedures on DataFrames using a domain-specific la
 
 ```{r}
 kable(userDF, escape = F, align = "c") %>%
-  kable_material_dark("striped", full_width = F, html_font = "Roboto Condensed") %>% 
+  kable_material("striped", full_width = F, html_font = "Roboto Condensed") %>% 
   kable_styling(font_size = 12)
 ```
 
@@ -451,18 +451,6 @@ COUNT(*) as n
 FROM twitter_df
 GROUP BY created_weekday
 ORDER BY created_weekday DESC
-```
-
-
-
-```{r, out.width="70%"}
-plot.weekday <- ggplot(dftweets, aes(x = week)) + geom_bar(stat = "count", width = 0.75, fill = "cornflowerblue", color = "navy") + theme_ipsum_rc(base_size = 8)
-
-
-ragg::agg_png(filename = "assets/static/report4.png", width = 6587, height = 3595, units = "px", res = 900)
-plot.weekday
-invisible(dev.off())
-knitr::include_graphics("assets/static/report4.png")
 ```
 
 
