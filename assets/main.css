@@ -11,35 +11,42 @@ h1.title {
     text-transform: uppercase;
     font-weight: 800;
     text-shadow: 1px 1px 1px rgb(0 0 0 / 20%);
+    text-shadow: 1px 1px 1px rgb(0 0 0 / 20%), 0 -0.25px 0 #333, 0 0.4px 0.8px rgb(0 0 0 / 40%), 0 0.7px 1px rgb(0 0 0 / 15%), 0 0.75px 0.75px rgb(0 0 0 / 18%);
     color: rgb(15, 20, 25);
 }
 
 h2 {
-  font-weight: 600;
+    font-weight: 800;
     font-size: 18pt;
     text-transform: uppercase;
-    color: #0f141a;
-    font-family: 'Roboto', sans-serif;
+    color: #263240;
     letter-spacing: 1px;
     text-shadow: 0.5px 0.5px 0.5px rgb(0 0 0 / 20%);
     font-family: 'Roboto', sans-serif;
+    margin-top: -46pt !important;
     
 }
 
 h3 {
-    font-family: 'Roboto', sans-serif;
-    font-size: 18pt;
-    font-weight: 500;
-    letter-spacing: 0.75px;
+  font-family: 'Roboto', sans-serif;
+    font-size: 15pt;
+    font-weight: 600;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
+    color: #60667b;
+    text-shadow: 0.5px 0.5px 0.5px rgb(0 0 0 / 20%);
+    margin-top: -40pt !important;
 }
 
 h4 {
-    font-family: 'Roboto', sans-serif;
-    font-size: 15pt;
+  font-family: 'Roboto', sans-serif;
+    font-size: 13pt;
     font-weight: 400;
-    letter-spacing: 0.75px;
+    letter-spacing: 0.25px;
     text-transform: uppercase;
+    opacity: 0.5;
+    color: #60667b;
+    text-shadow: 0.15px 0.15px 0.001px hsl(0deg 0% 7% / 99%), -0.25px -0.25px 0.2px hsl(220deg 20% 85% / 75%), 0.25px 0.25px 0.25px hsl(0deg 0% 0%), -0.2px -0.2px 0.1px hsl(0deg 0% 10% / 65%), -0.5px -0.5px 0.2px hsl(0deg 0% 90% / 95%), 0.5px 0.5px 0.5px hsl(0deg 0% 70% / 95%);
 }
 
 h3.subtitle {
@@ -81,7 +88,7 @@ h4.date {
 
 body {
     font-family: 'Source Sans Pro', sans-serif;
-    font-size: 12pt;
+    font-size: 11pt;
     line-height: 1.4;
     color: #333;
 }
@@ -110,12 +117,11 @@ hr {
 
 .myhighlight {
     font-family: 'Roboto';
-    padding: 2.5px 4px;
-    background-color: #ebecf0;
+    padding: 2px 3px;
     border-radius: 5px;
-    text-shadow: 0.6px 0.6px 0 hsl(227deg 12% 5% / 50%);
+    text-shadow: 0 1px 1px hsl(0deg 0% 10% / 65%), 0.04em 0.04em 0px hsl(0deg 0% 35% / 50%), -0.1px -0.1px 0.1px hsl(217deg 100% 90%);
     color: #f5f5f5;
-    font-size: 13px;
+    font-size: 10pt;
     font-weight: 500;
     letter-spacing: 0.5px;
     background-image: linear-gradient(to right, #25aae1, #4481eb, #04befe, #3f86ed);
@@ -124,7 +130,7 @@ hr {
 
 .myhighlight2 {
     border-radius: 5px;
-    font-size: 18px;
+    font-size: 9pt;
     letter-spacing: 0.5px;
     background: #333;
     box-shadow: 0 1px 3px rgb(0 0 0 / 10%), 0 1px 2px rgb(0 0 0 / 20%), inset 1px 1px 1px rgb(255 255 255 / 60%), inset -1px -1px 1px rgb(12 13 18 / 6%), -1px -1px 1px 0px rgb(255 255 255 / 60%), -1px -1px 4px 0px rgb(255 255 255 / 60%), -2px -2px 8px 0px rgb(255 255 255 / 60%), 1px 1px 1px 0px rgb(12 13 18 / 6%), 1px 1px 4px 0px rgb(12 13 18 / 6%), 2px 2px 8px 0px rgb(12 13 18 / 6%);
@@ -134,8 +140,27 @@ hr {
     padding: 4pt 6pt;
     font-weight: 300;
     font-family: 'Roboto';
+    line-height: 30pt;
 }
 
+.myhighlight3 {
+    background-image: linear-gradient(0deg, hsl(228deg 14% 89%), #fff);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 60%), inset 0 -1px 0 rgb(0 0 0 / 30%), inset 0 0 0px 1px rgb(0 0 0 / 10%), 0 0 1px rgb(0 0 0 / 50%), 0 2px 2px rgb(0 0 0 / 40%) !important;
+    border: 1.5px solid #e4e5ea;
+    border-radius: 5px;
+    background: #333;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 10%), 0 1px 2px rgb(0 0 0 / 20%), inset 1px 1px 1px rgb(255 255 255 / 60%), inset -1px -1px 1px rgb(12 13 18 / 6%), -1px -1px 1px 0px rgb(255 255 255 / 60%), -1px -1px 4px 0px rgb(255 255 255 / 60%), -2px -2px 8px 0px rgb(255 255 255 / 60%), 1px 1px 1px 0px rgb(12 13 18 / 6%), 1px 1px 4px 0px rgb(12 13 18 / 6%), 2px 2px 8px 0px rgb(12 13 18 / 6%);
+    background-color: hsl(228deg 14% 93%);
+    text-shadow: 0.25px 0.25px 0.25px hsl(233deg 5% 26% / 85%), 0.35px 0.35px 0.35px hsl(233deg 5% 26% / 85%), 0 -1.1px 0px rgb(12 13 18 / 8%), 0 1.2px 0 rgb(255 255 255);
+    padding: 4pt 5pt;
+    font-weight: 300;
+    line-height: 25pt;
+    font-family: 'Roboto', sans-serif;
+    font-size: 8pt;
+    letter-spacing: 0.75px;
+    text-transform: uppercase;
+    color: #60667b;
+}
 
 /* ---- toc ---- */
 
@@ -220,12 +245,17 @@ pre {
     border: none;
     box-shadow: 0 2px 2px #888;
     background: #22242b;
+    background: #2d2d2d;
+    padding: 10pt;
+    margin-bottom: 14pt;
+
 
 }
 
 pre code {
-    font-family: 'Inconsolata', monospace;
-    font-size: 10pt !important;
+    /*font-family: 'Inconsolata', monospace;*/
+    font-family: Consolas;
+    font-size: 9.5pt !important;
     color: hsl(201deg 30% 96%);
     box-shadow: none !important;
     text-shadow: 0.6px 0.6px 0 #000000;
@@ -243,12 +273,18 @@ code {
 /* ---- datasource2 style ---- */
 
 .datasource2 {
-    margin: 10px 0;
+    margin: 15px 0;
     box-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
-    color: hsl(227deg 12% 43%);
+    color: #61677c;
     border-radius: 13px;
     background: hsl(220deg 14% 95%);
     padding: 5pt 10pt;
+}
+
+
+
+.datasource2 ul {
+    padding-left: 22pt;
 }
 
 .datasource2 strong {
@@ -266,13 +302,13 @@ code {
 }
 
 .datasource2 code {
-    padding: 4px 6px;
+    padding: 3px 4px;
     background-color: #ebecf0;
     border-radius: 6px;
     text-shadow: 0.6px 0.6px 0 #fff;
     color: #61677c;
     font-family: 'Roboto';
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.5px;
     box-shadow: 1.5px 1.5px 2.5px #babecc, -2px -2px 5px #fff;
@@ -282,8 +318,12 @@ code {
     content: none !important;
 }
 
+.datasource2 ol li {
+    font-size: 11pt !important;
+}
+
 .datasource2 ol li::before {
-    content: counter(cupcake);
+  content: counter(cupcake);
     display: inline-flex;
     width: 16pt;
     height: 16pt;
@@ -291,14 +331,14 @@ code {
     align-items: center;
     justify-content: center;
     background-color: #ebecf0;
-    font-family: 'Roboto Slab', serif;
-    font-size: 9pt;
-    font-weight: 800;
+    font-family: 'Roboto';
+    font-size: 10pt;
+    font-weight: 600;
     color: hsl(214deg 100% 55%);
     box-shadow: 0.875px 0.875px 1.8px 0 rgb(0 0 0 / 30%), -0.875px -0.875px 1.8px 0 rgb(255 255 255), inset -0.5px -0.5px 1px 0 rgb(0 0 0 / 30%), inset 0.5px 0.5px 1px 0 rgb(255 255 255);
     margin: 0 4pt -1.5pt -22.5pt;
     vertical-align: bottom;
-    text-shadow: 0.35px 0.35px 0.3px hsl(218deg 100% 20%);
+    text-shadow: 0.25px 0.25px 0.25px hsl(0deg 0% 10% / 35%), 0.2px 0.2px 0.2px hsl(227deg 12% 40%), -0.45px -0.45px 0.25px hsl(0deg 0% 100%), 0.15px -0.15px 0.15px hsl(0deg 0% 100%), 0.25px -0.15px 0.05px hsl(220deg 85% 60%), 0.35px 0.35px 0.35px hsl(227deg 12% 80%);
 }
 
 .datasource2 ul li::before,
@@ -313,7 +353,7 @@ code {
     font-weight: 500;
     background: linear-gradient(to top, #4292ff, #388cff, #2e86ff, #2380ff, #177aff);
     vertical-align: middle;
-    margin: 0 5pt 3pt -12pt;
+    margin: 0px 4pt 2pt -12pt;
     box-shadow: 0.875px 0.875px 1.8px 0 rgb(0 0 0 / 30%), -0.875px -0.875px 1.8px 0 rgb(255 255 255), inset -0.5px -0.5px 1px 0 rgb(0 0 0 / 30%), inset 0.5px 0.5px 1px 0 rgb(255 255 255);
 }
 
@@ -324,10 +364,11 @@ code {
 .datasource2 li {
     color: #61677c;
     counter-increment: cupcake;
-    font-size: 15px;
+    font-size: 10pt;
     text-shadow: 0.2px 0.2px 0.2px hsl(227deg 12% 40%);
     font-weight: 300;
     margin: 5pt 2pt;
+    margin-left: -6pt;
 }
 
 .datasource2 ul li {
@@ -335,21 +376,33 @@ code {
 }
 
 .datasource2 p {
-    font-size: 16px;
-    color: hsl(227deg 12% 35%);
-    text-shadow: 1px 1px 0 #ffffff;
+    font-size: 10pt;
+    text-shadow: 0.2px 0.2px 0.2px hsl(227deg 12% 40%);
+    font-weight: 300;
+    color: #61677c;
     margin-bottom: 5pt;
     margin-top: 5pt;
+}
+
+/* ---- datasource 22 style ---- */
+
+
+.datasource22 li {
+    color: #61677c;
+    text-shadow: 0.2px 0.2px 0.2px hsl(227deg 12% 40%);
+    font-weight: 300;
+        margin: 0pt -4pt;
+    font-size: 16px;
 }
 
 /* ---- roundedlist style ---- */
 
 .roundedlist {
-    padding: 12pt;
-    margin: 12px 0;
     box-shadow: inset -2.5px 2.5px 1px 0 rgb(0 0 0 / 40%), inset 3px -3px 2px 0 rgb(20 22 28 / 10%), -1px 1px 3px 0 rgb(63 69 87 / 50%);
     background-color: hsl(225deg 12% 15%);
     border-radius: 10px;
+    padding: 12pt;
+    margin: 12pt 0pt;
 }
 
 .roundedlist li::marker {
@@ -434,7 +487,7 @@ pre.python::before {
     display: flex;
     overflow: hidden;
     width: 38px;
-    margin-bottom: -10pt;
+    margin: -2pt -6pt;
     padding: 0.5px 2pt 0.5px 2pt;
     border-radius: 4pt;
     font-weight: 300;
@@ -458,7 +511,30 @@ pre.sql::before {
     display: flex;
     overflow: hidden;
     width: 36px;
-    margin-bottom: -10pt;
+    margin: -2pt -6pt;
+    padding: 0.5px 2pt 0.5px 2pt;
+    border-radius: 4pt;
+    font-weight: 300;
+    font-family: rubik;
+}
+
+pre.r::before {
+    content: "r";
+    color: #8798a9;
+    font-size: 7.5pt;
+    background: #f5f2f0;
+    background: rgba(224,224,224,.2);
+    box-shadow: 0 2px 0 0 rgb(0 0 0 / 20%);
+    justify-content: flex-end;
+    display: block;
+    color: black;
+    position: relative;
+    top: -7px;
+    float: right;
+    display: flex;
+    overflow: hidden;
+    width: 36px;
+    margin: -2pt -6pt;
     padding: 0.5px 2pt 0.5px 2pt;
     border-radius: 4pt;
     font-weight: 300;

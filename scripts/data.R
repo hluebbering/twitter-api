@@ -128,10 +128,9 @@ df_quote <- gfg_data %>%
            quoted_source, quoted_favorite_count, quoted_retweet_count, 
            quoted_user_id, quoted_screen_name, quoted_name, 
            quoted_followers_count, quoted_friends_count, quoted_statuses_count, 
-           quoted_location, quoted_description, quoted_verified)) %>%
-  head(4) 
+           quoted_location, quoted_description, quoted_verified))
 
-kbl.quote <- df_quote %>% 
+kbl.quote <- head(df_quote) %>% 
   kable(escape = FALSE) %>%
   kable_styling(full_width = T, font_size = 9, html_font = "roboto", bootstrap_options = c("striped", "hover")) %>%
   row_spec(0, background = "rgb(29, 155, 240)", font_size = 7.8, color = "white", extra_css = "text-transform: uppercase; font-weight: 400; letter-spacing: 0.5px; text-align: right; text-shadow: 1px 1px 1px rgb(0 0 0 / 20%);") %>%
@@ -176,15 +175,12 @@ normal <- nrow(gfg_data[gfg_data$is_quote == 'FALSE' &
 mentions <- nrow(data.frame(na.omit(gfg_data$mentions_user_id)))
 replies <- nrow(data.frame(na.omit(gfg_data$reply_to_status_id)))
 
-tweet.types <-
-  data.frame(type = c(
-    rep('retweets', retweets),
-    rep('quotes', quotes),
-    rep('normal', normal),
-    rep('replies', replies)
-  )) %>%
-  mutate(type = factor(type, levels = c("quotes", "retweets", "normal", "replies"))) %>%
-  dplyr::arrange()
+
+tweet.types <- data.frame(
+  type = c("retweet", "quote", "regular", "reply"),
+  n = c(retweets, quotes, normal, replies)) %>%
+  #dplyr::mutate(type = factor(type, levels = c("retweet", "quote", "regular", "reply"))) %>%
+  dplyr::arrange(dplyr::desc(n))
 
 
 #### TOP MENTIONS & HASHTAGS ####
@@ -213,7 +209,7 @@ tt_sent <- gfg_data %>%
   geom_smooth(method = "loess", span = 0.2, color = "grey") + 
   scale_color_manual(values = c("#dd3333", "#22aa33")) + 
   geom_hline(yintercept = 0, linetype = 2, colour = "#000000cc") + 
-  theme_ipsum_rc()
+  theme_ipsum_rc() + theme(legend.position = "none")
 
 
 #### SENTIMENT ANALYSIS PART 2 ####
@@ -245,6 +241,19 @@ dfttext2 <- dfttext1 %>%
 
 tweets.text <- data.frame("hrs" = dfttext1$hours, dfttext2) %>% 
   dplyr::group_by(hrs) 
+
+
+ttplot <- tweets.text %>% gather(feature, n, -hrs) %>%
+  ggplot(aes(x = hrs, y = n, colour = feature))  +
+  geom_smooth(method = "loess", span = 0.5) +
+  facet_wrap(~feature, ncol = 6) + 
+  theme_ipsum_rc(base_size = 6, axis_text_size = 6, axis_title_size = 6) +
+  theme(axis.text = element_text(size = rel(.68)), 
+        strip.text = element_text(size = rel(.75)), 
+        strip.text.x = element_text(margin = margin(5, 3, 6, 3, "pt")), panel.grid.major = element_line(colour = "black", size = rel(.08)), panel.grid.minor = element_line(colour = "black", size = rel(.05)), legend.position = "none") +
+  labs(x = NULL, y = "Standardized Mean Frequencies")
+
+
 
 #https://adb-8250698386551697.17.azuredatabricks.net
 
@@ -288,10 +297,20 @@ userDF <- tweets.clean %>%
   dplyr::distinct(user_id, .keep_all = TRUE)
 
 nDF <- nrow(userDF)
+userDF[1] <- cell_spec(userDF[[1]], background = "transparent", bold = T, 
+                        color = spec_color(1:nDF, begin = 0.1,
+                                           end = 0.25, 
+                                           option = "turbo", 
+                                           direction = -1),
+                        extra_css=c("font-weight:300; text-shadow: 0.15px 0.15px 0.15px hsl(233deg 5% 26% / 85%), 0.25px 0.25px 0.25px hsl(233deg 5% 26% / 85%), 0 -0.75px 0px rgb(12 13 18 / 8%), 0 1px 0 rgb(255 255 255);"))
+
 userDF[2] <- cell_spec(userDF[[2]], color = "white", bold = T, 
-                       background = spec_color(1:nDF, end = 0.9, 
-                                               option = "A", 
-                                               direction = -1))
+                       background = spec_color(1:nDF, begin = 0.1,
+                                               end = 0.25, 
+                                               option = "turbo", 
+                                               direction = -1),
+                       extra_css = c("box-shadow: 0.875px 0.875px 1.8px 0 rgb(0 0 0 / 30%), -0.75px -0.75px 1.5px 0 hsl(216deg 16% 94%), inset -0.5px -0.5px 1px 0 rgb(0 0 0 / 30%), inset 0.5px 0.5px 1px 0 hsl(220deg 23% 95%);"))
+
 
 
 #######################################
@@ -303,16 +322,17 @@ tweetDF <- tweets.clean %>%
          hashtags, symbols, media_type, is_quote, is_retweet) %>% 
   dplyr::distinct(status_id, .keep_all = TRUE) %>% 
   arrange(desc(created_at)) %>%
-  head()
+  head(4)
 
 ntweet <- nrow(tweetDF)
 tweetDF[2] <- cell_spec(tweetDF[[2]], background = "transparent", bold = T, 
-                        color = spec_color(1:ntweet, begin = 0,
+                        color = spec_color(1:ntweet, begin = 0.1,
                                            end = 0.25, 
                                                 option = "turbo", 
-                                                direction = -1))
+                                                direction = -1),
+                        extra_css=c("padding-left: 0px; font-weight: 300; text-shadow: 0.15px 0.15px 0.15px hsl(233deg 5% 26% / 85%), 0.25px 0.25px 0.25px hsl(233deg 5% 26% / 85%), 0 -0.75px 0px rgb(12 13 18 / 8%), 0 1px 0 rgb(255 255 255);"))
 tweetDF[3] <- cell_spec(tweetDF[[3]], color = "white", bold = T, 
-                        background = spec_color(1:ntweet, begin = 0,
+                        background = spec_color(1:ntweet, begin = 0.1,
                                                 end = 0.25, 
                                            option = "turbo", 
                                            direction = -1),
@@ -330,7 +350,7 @@ replyDF <- tweets.clean %>%
   dplyr::filter(reply_to_status_id != 'NA') %>% 
   select(status_id, created_at, reply_to_status_id, reply_to_user_id, 
          reply_to_screen_name, mentions_user_id, mentions_screen_name) %>% 
-  dplyr::distinct(reply_to_status_id, .keep_all = TRUE) %>%
+  #dplyr::distinct(reply_to_status_id, .keep_all = TRUE) %>%
   head()
 
 nreply <- nrow(replyDF)
