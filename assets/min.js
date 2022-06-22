@@ -22,5 +22,5 @@ hljs.registerLanguage("sql",
       {cN:"string",c:[e.BE],v:[{b:'"',e:'"'},{b:"'",e:"'"}]},
       {cN: "keyword", b: /(^|\s*)(:::?|\.)\w+(?=\(|$)/}, ]}});
 
-   
+
 hljs.initHighlightingOnLoad();

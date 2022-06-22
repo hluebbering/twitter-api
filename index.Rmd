@@ -40,12 +40,15 @@ library(gridExtra)
 library(patchwork)
 library(ggpubr)
 library(pagedown)
+library(packcircles)
 source("scripts/data.R")
+source("scripts/sentiment.R")
 ```
 
 
 
 <script src="assets/min.js"></script>
+<script src="assets/min.r.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 
 
@@ -75,7 +78,7 @@ userDF %>% dplyr::select(-description, -name, -favourites_count) %>%
 `Apache Spark` is an open-source engine for large-scale parallel data processing known for its speed, ease of use, and cutting-edge analytics. It provides high-level APIs in general-purpose programming languages such as Scala, Python, and R, as well as an optimization engine supporting standard data analysis methods. 
 
 
-`Azure Databricks` is an analytics platform based on Microsoft Azure cloud services, providing the latest versions of Apache Spark and allowing consistent integration with open source libraries. Built with Spark capabilities, Databricks provides a cloud platform with an interactive workspace and fully managed Spark clusters, allowing users to work in a single, easy-to-use environment, create and configure clusters in seconds, and quickly execute Spark code.
+`Azure Databricks` is an analytics platform based on Microsoft Azure cloud services, enabling the latest versions of Apache Spark and open source libraries. Built with Spark capabilities, Databricks provides a cloud-based interactive workspace with fully managed Spark clusters. This allows users to work in a single, easy-to-use environment, create and configure clusters in seconds, and quickly execute Spark code.
 
 
 
@@ -100,9 +103,6 @@ userDF %>% dplyr::select(-description, -name, -favourites_count) %>%
 kable(dfvar, escape = FALSE, col.names = NULL) %>% kable_styling(font_size = 12, bootstrap_options = c("striped", "hover"), html_font = "Roboto Condensed") %>% 
   column_spec(c(1, 3, 5, 7), extra_css = c("font-weight: 700; font-family: Roboto; font-size: 13.5px; text-shadow: 0 1px 1px white, 0.04em 0.04em 0px #0000004d;"), width_max =  "1cm") %>% 
   add_header_above(c("Data Set Variables" = 8), align = "l", extra_css = c("text-transform: uppercase; text-shadow: 0 1px 1px white, 0.04em 0.04em 0px #0000004d;"), font_size = 12) %>% scroll_box(width = "100%", extra_css = "overflow-x: overlay !important; border: none !important; margin: 12pt 0px 12pt 0;")
-
-
-
 ```
 
 
@@ -118,11 +118,10 @@ Once you have your twitter app setup and loaded the `rtweet` package in R, you c
 
 ```{r, echo=TRUE, eval=FALSE}
 library(rtweet) # load rtweet package
-
-twitter_token <- create_token(app = "mytwitterapp",
-  consumer_key = "api_key", consumer_secret = "api_secret_key",
-  access_token = "access_token", access_secret = "access_token_secret")
-
+twitter_token <- create_token(
+  app = "mytwitterapp",
+  consumer_key = "api_key", consumer_secret = "api_secret",
+  access_token = "access_token", access_secret = "access_secret")
 use_oauth_token(twitter_token) # authenticate via web browser
 ```
 
@@ -143,10 +142,11 @@ df <- search_fullarchive(q = "from:elonmusk", n = 10000, env_name = enviroment_n
 tweetDF2 <- tweetDF %>% select(-status_id, -symbols, -source, -hashtags, -media_type)
 kable(tweetDF2, escape = F) %>% 
   kable_styling(font_size = 13, html_font = "Roboto Condensed", bootstrap_options = c("striped")) %>%
-  column_spec(c(3:4), width_max = "2.5cm", extra_css = c("font-size: 11px;")) %>%
+  column_spec(c(3:9), width_max = "2.5cm", extra_css = c("font-size: 11px;")) %>%
   column_spec(1, extra_css = c("font-size: 11.25px;"), width_min = "2cm") %>%
   row_spec(0, extra_css = c("font-weight: 700; font-size: 11px;")) %>%
-  add_header_above(c("Data Set Preview:" = 9), align = "l", extra_css = c("text-transform: uppercase; text-shadow: 0 1px 1px white, 0.04em 0.04em 0px #0000004d;")) %>%
+  add_header_above(c("Data Set Preview:" = 9), align = "l", 
+  extra_css = c("font-weight: 400; letter-spacing: 0.25px; text-transform: uppercase; color: #1d9bf0; font-size: 9pt; text-shadow: 0.15px 0.15px 0.001px #12121240, -0.25px -0.25px 0.2px #d1d6e0f2, 0.25px 0.25px 0.25px #00000080, -0.2px -0.2px 0.1px #1a1a1a40, -0.5px -0.5px 0.2px #e6e6e680, 0.5px 0.5px 0.5px #b3b3b380; text-align: left;")) %>%
   scroll_box(width = "100%", extra_css = "overflow-x: overlay !important; border: none !important; margin: 12pt 0px 12pt 0;")
 
 ```
@@ -178,48 +178,25 @@ kable(tweetDF2, escape = F) %>%
 ### Storing Data in Databricks
 
 
-<span class="myhighlight2">Building a Databricks workspace using an Apache Spark cluster. </span>
+<span class="myhighlight">Building a Databricks workspace using an Apache Spark cluster. </span>
 
-First, we create a Databricks workspace from the Azure portal and then launch the workspace, which redirects us to the interactive Databricks portal. We create a Spark cluster from the Databricks interactive workspace and configure a notebook on the cluster. In the notebook, we can use either `PySpark` or `SparkR` to read data from a dataset into a Spark DataFrame. Using the Spark DataFrame, we can run a Spark SQL job to query the data.
-
-
-<div class = "datasource">
-
-```{r, out.width="50%", fig.show='hold'}
-knitr::include_graphics("assets/static/workspace.jpeg")
-```
-
-</div>
+First, we create a Databricks workspace from the Azure portal and then launch the workspace, which redirects us to the interactive Databricks portal. We create a Spark cluster from the Databricks interactive workspace and configure a notebook on the cluster. In the notebook, we can use either **PySpark** or **SparkR** to read data from a dataset into a Spark DataFrame. Using the Spark DataFrame, we can run a Spark SQL job to query the data.
 
 
 
-The Azure Databricks system stores this data file in FileStore, located in the *FileStore/* folder, which we then use the following PySpark or SparkR command to read in the data as a dataframe.
-
-
-<span class="myhighlight2">Python Code: </span>
-
-
-```python
-df = spark.read.csv(path = 'dbfs:/FileStore/dfclean.csv',
-                    header = "true", multiLine = "true")
-
-# register table so it is accessible via SQL Context
-df.createOrReplaceTempView('twitterTemp')
-```
 
 <span class="myhighlight2">R Code: </span>
 
 ```{r, eval=FALSE, echo=TRUE}
 require(SparkR)
 df <- read.df("dbfs:/FileStore/dfclean.csv", source = "csv", 
-              header="true", inferSchema = "true")
-createOrReplaceTempView(df, "twitterTemp") # register table
+              header = "true", inferSchema = "true")
+createOrReplaceTempView(df, "twitterTemp") # register table for SQL
 ```
 
 
 
-FileStore is a specific folder in DBFS where users can import and store data files from their local computer into a DBFS web browser. The Spark API then reads the imported data into an Apache Spark DataFrame as shown above.
-
+The Azure Databricks system stores this data file in FileStore, located in the *FileStore/* folder, which we then use the above SparkR command to read in the data as a dataframe.
 
 
 
@@ -242,54 +219,61 @@ Users can perform relational procedures on DataFrames using a domain-specific la
 ### Query 1. Mentions
 
 <div class = "datasource2">
-- Display the thread (replies) of tweets (the tweet, time, id, in mention to id, user name with their screen name) posted by Elon Musk with screen_name in the order in which they were posted.
+- Track Elon Musk's engagement with other twitter users and display the corresponding thread of tweets posted by Musk (tweet content, date posted, users in tweet).
 </div>
 
 
+To track Elon Musk's engagement with people on twitter, we want to look into tweets containing conversations with and directed to other users. We begin by unpacking information for each of Elon Musk's tweets that mention another person's username. Specifically, **mentions** are a particular type of tweet containing other account usernames, preceded by the "@" symbol. 
 
 
-<span class="myhighlight2">Python Code: </span>
 
-```python
-mentionDF = spark.sql("SELECT created_at, text, \
-    mentions_user_id, mentions_screen_name \
-    FROM twitterTemp")
-mentionDF.filter(mentionDF.mentions_user_id != "NA")
-mentionDF.createOrReplaceTempView('mentionDF')
-```
+
 
 <span class="myhighlight2">R Code: </span>
 
 ```{r, echo=TRUE, eval=FALSE}
-require(SparkR)
-mentionDF <- select(df, "created_at", "text",
-    "mentions_user_id", "mentions_screen_name")
-mentionDF <- filter(mentionDF, mentionDF$mentions_user_id != "NA")
-createOrReplaceTempView(mentionDF, "mentionDF")
+dfMentions <- SparkR::select(df, "created_at", "mentions_user_id",
+                     "mentions_screen_name", "text")
+dfMentions <- SparkR::filter(dfMentions, dfMentions$mentions_user_id != NA)
+createOrReplaceTempView(dfMentions, "dfMentions")
 ```
 
 
 
 
-\ 
 
 
 ```{r}
-reply.data <- tweets.clean %>% dplyr::filter(mentions_user_id != 'NA') %>% dplyr::select(created_at, text, mentions_user_id, mentions_screen_name) %>% head(4)
+dfMentions <- subset(gfg_data, !is.na(gfg_data$mentions_user_id)) %>% dplyr::select(created_at, mentions_user_id, mentions_screen_name, text)
 
-kable(reply.data, escape = FALSE) %>% 
-  kable_styling(font_size = 12, bootstrap_options = c("striped", "hover"), html_font = "Roboto Condensed", full_width = F)
+tail(dfMentions, 50)[c(7, 10, 29, 48),] %>% 
+  kable(escape = FALSE) %>% 
+  kable_styling(full_width = F, html_font = "Roboto Condensed", font_size = 10, bootstrap_options = c("hover", "striped")) %>%
+  add_header_above(c("Mentions" = 4), extra_css = c("font-weight: 400; letter-spacing: 0.25px; text-transform: uppercase; color: #1d9bf0; font-size: 9pt; text-shadow: 0.15px 0.15px 0.001px #12121240, -0.25px -0.25px 0.2px #d1d6e0f2, 0.25px 0.25px 0.25px #00000080, -0.2px -0.2px 0.1px #1a1a1a40, -0.5px -0.5px 0.2px #e6e6e680, 0.5px 0.5px 0.5px #b3b3b380; text-align: left;"))
+```
+
+
+As shown above, there exist tweets containing multiple mentioned *usernames* within the body of the text, all grouped together in a single row. So now we must manipulate the data so that each mentioned user for a tweet forms its own row, which allows us to count the total number of times Musk mentioned a unique user.
+
+
+
+
+```{r, echo=TRUE, eval=FALSE}
+dfMentions %>%
+  tibble(user = str_extract_all(text, "@\\w+")) %>%
+  tidyr::unnest_longer(user) %>%
+  dplyr::count(user, sort = TRUE)
 ```
 
 
 
+The above command uses the `str_extract_all()` function to extract the mentioned users for each tweet and `unnest_longer()` to transform the nested lists into tidy rows so that each row contains only one user. Lastly, we count the total number of observations for each unique user.
 
 
 <span class="myhighlight2">SQL Query: </span>
 
 ```sql
-SELECT mentions_screen_name,
-  COUNT(*) AS n
+SELECT mentions_screen_name, COUNT(*) AS n
 FROM mentionDF
 WHERE mentions_screen_name != 'NA'
 GROUP BY mentions_screen_name
@@ -299,29 +283,53 @@ SORT BY n DESC;
 
 
 ```{r, fig.show='hold', out.width="100%"}
-dfMent <- data.frame(dfMentions) %>% head(12)
-colnames(dfMent) <- c("mentions_screen_name", "Freq")
+topMentions <- plot.Mentions + table.Mentions + plot_annotation(
+  title = "Top 12 Most Mentioned Users",
+  subtitle = "Elon Musk's Tweets (2017-2022)",
+  caption = "Source: twitter api dataset")
 
-plotMentions <- dfMent %>%
-  ggplot(aes(y = mentions_screen_name, x = Freq, fill = Freq)) +
-  geom_bar(stat = "identity", color = "black", cex = 0.25)  +
-  xlab(NULL) + ylab(NULL) +
-  theme_ipsum_rc(base_size = 9, plot_margin = margin(20,8,20,8),
-                  plot_title_size = 10) + 
-  theme(legend.position = "none")
+topMentions <- topMentions + plot_annotation(
+  theme = theme(text = element_text(family = "Roboto Condensed"),
+    plot.title = element_text(size = 13.25, colour = "gray5", face = "bold"), 
+    plot.subtitle = element_text(size = 12, colour = "gray20"), 
+    plot.caption = element_text(size = 8, face = "italic", colour = "gray40"))) + 
+  plot_layout(widths = c(2, 1))
 
 
-
-stable.p <- ggtexttable(dfMent, rows = NULL, 
-                        theme = ttheme("mBlue", base_size = 8))
-
-ggarr1 <- ggarrange(plotMentions, stable.p, widths = c(2, 1), heights = c(1, 1), labels = c("Top 12 Most Mentioned Twitter Users"), font.label = list(size = 10, family = "Roboto"))
-
-ragg::agg_png(filename = "assets/static/report1.png", width = 7087, height = 4895, units = "px", res = 900)
-ggarr1
+ragg::agg_png(filename = "assets/static/userMentions.png", width = 8887, height = 5495, units = "px", res = 1000)
+topMentions
 invisible(dev.off())
-knitr::include_graphics("assets/static/report1.png")
+knitr::include_graphics("assets/static/userMentions.png")
 ```
+
+
+
+
+Hence, SpaceX and Tesla are the most frequently mentioned users in Musk's tweets. Linking conversations together, a **reply** is a type of tweet sent in direct response to another user's tweet. Similar to mentions, replies allow users to direct tweets toward other twitter users and interact in conversations. Following the same general procedure above, we obtain the following results.
+
+
+```{r, out.width="100%"}
+topReply <- (plotReplies + ggtitle("Top 12 Most Replied To Users") +
+               theme(plot.title = element_text(size = 13, margin = ggplot2::margin(b=-1)))) +
+  (plot.Mentions2 + ggtitle("Top 12 Most Mentioned Users") +
+               theme(plot.title = element_text(size = 13, margin = ggplot2::margin(b=-1))))
+
+topReply <- topReply + plot_annotation(
+  theme = theme(text = element_text(family = "Roboto Condensed"),
+    plot.title = element_text(size = 13.25, colour = "gray5", face = "bold"), 
+    plot.subtitle = element_text(size = 12, colour = "gray20")))
+
+
+ragg::agg_png(filename = "assets/static/topReplies.png", width = 9487, height = 4695, units = "px", res = 1050)
+topReply
+invisible(dev.off())
+knitr::include_graphics("assets/static/topReplies.png")
+
+
+```
+
+
+
 
 
 
@@ -336,160 +344,130 @@ knitr::include_graphics("assets/static/report1.png")
 - What is the percentage of different types of tweets (simple tweet, reply, retweet, quoted tweet) to their overall number of tweets?
 </div>
 
-
-When creating a `managed table`, Spark will manage both the table data and the metadata. To obtain the percentage of different types of tweets, we begin by creating a managed table for each tweet type (simple, reply, retweet, quote). The following R command returns Elon Musk's different tweet types and overall frequency.
+The different type of tweets that exist are **general tweets**, **mentions**, **replies**, **retweets**, and **quotes**. The mention and reply tweet types are already defined and analyzed in the previous section. General tweets are original twitter posts containing text, photos, a GIF, and/or video, but do **not** include any mentions, replies, retweets, or quotes. Lastly, retweets and quotes are both re-postings of another person's tweet, although quotes allow users to post another person's tweet with their own added comment.
 
 
 <span class="myhighlight2">R Code: </span>
 
+
 ```{r, echo=TRUE, eval=FALSE}
-retweets <- nrow(df[df$is_retweet == "TRUE", ])
-quotes <- nrow(df[df$is_quote == "TRUE", ])
-normal <- nrow(df[df$is_quote == "FALSE" & df$is_retweet == "FALSE", ])
-replies <- nrow(df[df$reply_to_status_id != "NA", ])
+nGeneral <- nrow(df[df$is_retweet == FALSE, ] %>% # removes retweets
+                   subset(is.na(reply_to_status_id))) # removes replies
+nMentions <- nrow(subset(df, !is.na(df$mentions_user_id)))
+nReplies <- nrow(subset(df, !is.na(df$reply_to_status_id)))
+nRetweets <- nrow(nRetweets <- df[df$is_retweet == TRUE, ])
+nQuotes <- nrow(df[df$is_quote == TRUE, ])
 
-data <- data.frame(type = c("retweet", "quote", "regular", "reply"),
-  n = c(retweets, quotes, normal, replies))
-
-typeDF <- createDataFrame(data)
-createOrReplaceTempView(typeDF, "typeDF")
+tweetTypes <- data.frame(
+  type = c("General", "Mentions", "Replies", "Retweets", "Quotes"),
+  count = c(nGeneral, nMentions, nReplies, nRetweets, nQuotes))
 ```
 
 
+In the above, we create five different data sets either containing only general tweets, mentions, replies, retweets, or quotes. We then count the number of observations for each data set and store it in a separate data frame containing the tweet type and its respective count.
 
 
 
+```{r,  warning=FALSE, message=FALSE, out.width="95%"}
+plotTypes <- lolli.types + 
+  labs(title = "Types of Tweets Count", subtitle = "Elon Musk's Tweets (2017-2022)") + 
+  theme(text = element_text(family = "Roboto Condensed"),
+        plot.title = element_text(size = 14, colour = "gray5", face = "bold"), 
+        plot.subtitle = element_text(size = 12, colour = "gray20"))
 
-```{r,  warning=FALSE, message=FALSE, out.width="100%"}
-tweets.plot1 <- ggplot(tweet.types) + geom_bar(mapping = aes(x = type, y = n), stat="identity", width = 0.75, fill = "cornflowerblue", color = "navy") +
-  theme_ipsum_rc(base_size = 9, plot_margin = margin(20,8,20,8),
-                  plot_title_size = 10) + 
-  theme(legend.position = "none", axis.text.x = element_text(size = 10, face = "bold")) +
-  xlab(NULL) + ylab(NULL)
 
-dfTypes <- data.frame(tweet.types)
-colnames(dfTypes) <- c("Type", "n")
-
-table.types <- ggtexttable(dfTypes, rows = NULL, theme = ttheme("mBlue", base_size = 12))
-
-ggarrTypes <- ggarrange(tweets.plot1, table.types, widths = c(2, 1), heights = c(1, 1))
-
-ragg::agg_png(filename = "assets/static/tweetTypes.png", width = 7087, height = 4095, units = "px", res = 900)
-ggarrTypes
+ragg::agg_png(filename = "assets/static/tweetTypes.png", width = 7487, height = 4205, units = "px", res = 900)
+plotTypes
 invisible(dev.off())
 knitr::include_graphics("assets/static/tweetTypes.png")
 ```
 
 
 
+Now, let's display a table holding information for each of Elon Musk's retweets and query the data to obtain the usernames of Musk's most frequently retweeted users. To identify the most frequently retweeted users, we use tidyr tools to unnest, count, and sort each user from Musk's retweets.
 
 
 
-So the different tweet types are `retweet`, `quoted`, `reply_to`, and `normal`.
 
-Now, let's create a data table to display the information for each of Elon Musk's retweets and query the results to obtain the number of times Musk retweeted each user. With these results, we can visualize the most frequent twitter users Musk retweets as shown in the above graphic report.
+```{r, echo=TRUE, eval=FALSE}
+dfRetweet <- df %>% dplyr::filter(is_retweet == TRUE) %>%
+  dplyr::select(
+    retweet_created_at, retweet_text, retweet_user_id,
+    retweet_screen_name, retweet_favorite_count,
+    retweet_retweet_count, retweet_location) %>%
+  dplyr::arrange(desc(retweet_created_at))
 
-
-```sql
-CREATE TABLE retweets (
-  retweet_status_id CHAR, 
-  retweet_text TEXT, 
-  retweet_created_at DATE,
-  retweet_source TEXT,
-  retweet_favorite_count INT,
-  retweet_retweet_count INT,
-  retweet_user_id CHAR,
-  retweet_screen_name TEXT,
-  retweet_name TEXT,
-  retweet_followers_count INT,
-  retweet_friends_count INT,
-  retweet_statuses_count INT,
-  retweet_location TEXT,
-  retweet_description TEXT,
-  retweet_verified BOOLEAN
-);
-
-# Load data into table
-LOAD DATA INPATH '/user/dfclean' INTO TABLE retweets;
+dfRetweet %>% group_by(retweet_screen_name) %>%
+  tally(sort = TRUE)
 ```
 
 
-
-<span class="myhighlight">Retweets Table:</span>
-
 ```{r}
-df.retweet %>% dplyr::select(retweet_status_id, retweet_created_at, retweet_text, retweet_screen_name, retweet_favorite_count, retweet_retweet_count, retweet_followers_count, retweet_location, retweet_description, retweet_verified) %>%
+retweetKable <- gfg_data %>% 
+  dplyr::filter(is_retweet == TRUE) %>%
+  dplyr::select(retweet_status_id,retweet_created_at, retweet_text, retweet_user_id, retweet_screen_name, retweet_favorite_count, retweet_retweet_count, retweet_location) %>%
   dplyr::filter(retweet_status_id == "x1519461793604661248" |
                   retweet_status_id == "x715632500303761408" |
                   retweet_status_id == "x805661402937565184" |
                   retweet_status_id == "x1261074546561433601") %>%
-  dplyr::arrange(desc(retweet_created_at)) %>% 
   dplyr::select(-retweet_status_id) %>%
-  kable(col.names = c("created_at", "text", "screen_name", "favorite_count", "retweet_count", "followers_count", "location", "description", "verified"), escape = F) %>%
+  dplyr::arrange(desc(retweet_created_at)) %>% 
+  kable(col.names = c("created_at", "text", "user_id", "screen_name", "favorite_count", "retweet_count", "location"), escape = F) %>%
   kable_styling(full_width = F, html_font = "Roboto Condensed", font_size = 10, bootstrap_options = c("hover", "striped")) %>%
-  add_header_above(c("retweets" = 9), align = "l", extra_css = c("font-weight: 400; letter-spacing: 0.25px; text-transform: uppercase; color: #1d9bf0; font-size: 9pt; text-shadow: 0.15px 0.15px 0.001px #12121240, -0.25px -0.25px 0.2px #d1d6e0f2, 0.25px 0.25px 0.25px #00000080, -0.2px -0.2px 0.1px #1a1a1a40, -0.5px -0.5px 0.2px #e6e6e680, 0.5px 0.5px 0.5px #b3b3b380;")) %>%
+  add_header_above(c("retweets" = 7), align = "l", extra_css = c("font-weight: 400; letter-spacing: 0.25px; text-transform: uppercase; color: #1d9bf0; font-size: 9pt; text-shadow: 0.15px 0.15px 0.001px #12121240, -0.25px -0.25px 0.2px #d1d6e0f2, 0.25px 0.25px 0.25px #00000080, -0.2px -0.2px 0.1px #1a1a1a40, -0.5px -0.5px 0.2px #e6e6e680, 0.5px 0.5px 0.5px #b3b3b380;")) %>%
   scroll_box(width = "100%", extra_css = "overflow-x: overlay !important; border: none !important; margin: 12pt 0px 12pt 0;")
 
 
+retweetKable
 ```
+
+
+
+
 
 
 ```{r}
-source("scripts/sentiment.R")
+topRetweets <- plotRetweet + #tableRetweet + 
+  plot_annotation(
+  title = "Top 12 Most Retweeted Users",
+  subtitle = "Elon Musk's Tweets (2017-2022)",
+  caption = "Source: twitter api dataset")
+
+topRetweets <- topRetweets + plot_annotation(
+  theme = theme(text = element_text(family = "Roboto Condensed"),
+    plot.title = element_text(size = 13.25, colour = "gray5", face = "bold"), 
+    plot.subtitle = element_text(size = 12, colour = "gray20"), 
+    plot.caption = element_text(size = 8, face = "italic", colour = "gray40")))  
+
+
+# ragg::agg_png(filename = "assets/static/topRetweets.png", width = 8887, height = 5895, units = "px", res = 1050)
+# topRetweets
+# invisible(dev.off())
+# knitr::include_graphics("assets/static/topRetweets.png")
+
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r}
-dfrt <-  df.retweet %>% dplyr::filter(retweet_screen_name != 'elonmusk') %>% dplyr::count(retweet_screen_name, sort = TRUE) %>% head(12) %>% dplyr::mutate(retweet_screen_name = reorder(retweet_screen_name, n))
-
-plotrt <- dfrt %>% ggplot(aes(y = retweet_screen_name, x = n, fill = n, 
-                              label = n)) + 
-  geom_bar(stat = "identity", color = "black", cex = 0.25) + 
-  geom_text(hjust = -0.15, face="bold", size=3, family="Roboto") + xlim(c(0, 565)) +
-  xlab(NULL) + ylab(NULL) + ggplot2::labs(title = "Users Retweeted") + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), plot_title_size =  10) + theme(legend.position = "none")
-
-
-dfrt <- data.frame(dfrt)
-table.RT <- ggtexttable(dfrt, rows = NULL, theme = ttheme("mBlue", base_size = 8))
-
-
-ggarrRTs <- ggarrange(ggarrange(plotrt, table.RT, ncol=2, widths = c(4, 3)), ggarrange( plot.timeline, plot.donuts, ncol=2, widths = c(5.5,4)), nrow = 2, heights = c(4,4)) 
-
-ragg::agg_png(filename = "assets/static/reportRTs.png", width = 8287, height = 6005, units = "px", res = 900)
-ggarrRTs
-invisible(dev.off())
-knitr::include_graphics("assets/static/reportRTs.png")
-```
-
-
-
-
-
-
-
-
-
-```{r, out.width="100%"}
-dfreplies <- tweets.clean %>% dplyr::select(reply_to_screen_name) %>% dplyr::filter(reply_to_screen_name != 'NA') %>% dplyr::filter(reply_to_screen_name != 'elonmusk') %>% dplyr::count(reply_to_screen_name, sort = TRUE) %>% head(12) %>% dplyr::mutate(reply_to_screen_name = reorder(reply_to_screen_name, n))
-plotreplies <- dfreplies %>% ggplot(aes(y = reply_to_screen_name, x = n, fill = n)) + geom_bar(stat = "identity", color = "black", cex = 0.25)  + xlab(NULL) + ylab(NULL) + ggplot2::labs(title = "Users Replied To") + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), plot_title_size =  12)  + theme(legend.position = "none")
-
-dfqt <- tweets.clean %>% dplyr::select(quoted_screen_name) %>% dplyr::filter(quoted_screen_name != 'NA') %>% dplyr::filter(quoted_screen_name != 'elonmusk') %>% dplyr::count(quoted_screen_name, sort = TRUE) %>% head(12) %>% dplyr::mutate(quoted_screen_name = reorder(quoted_screen_name, n))
-plotqt <- dfqt %>% ggplot(aes(y = quoted_screen_name, x = n, fill = n)) + geom_bar(stat = "identity", color = "black", cex = 0.25) + xlab(NULL) + ylab(NULL) + ggplot2::labs(title = "Users Quoted") + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), plot_title_size =  12)  + theme(legend.position = "none")
-
-
-ggarrType <- ggarrange(plotreplies, plotqt, ncol=2, nrow = 1)
-
-ragg::agg_png(filename = "assets/static/reportType.png", width = 8887, height = 4205, units = "px", res = 900)
-ggarrType
-invisible(dev.off())
-knitr::include_graphics("assets/static/reportType.png")
+#user <- c("SpaceX", "Tesla", "NASA", "cleantechnica", "ElectrekCo", "OpenAI", "InsideEVs", "Hyperloop", "boringcompany")
+#u <- lookup_users(user)
 
 ```
-
-
-
-
-
-
 
 
 
@@ -516,14 +494,13 @@ The following SQL query parses the `created_at` datetime column to display the y
 
 
 ```{r, echo=TRUE, eval=FALSE}
-timeDF <- SparkR::select(df, c("status_id", "created_at"))
+dfTime <- select(df, c("status_id", "created_at"))
+dfTime$created_at <- to_timestamp(dfTime$created_at)
+dfTime$year <- year(dfTime$created_at)
+dfTime$month <- date_format(to_date(dfTime$created_at), "MMMM")
+dfTime$weekday <- date_format(to_date(dfTime$created_at), "EEEE")
 
-timeDF$created_at <- to_timestamp(timeDF$created_at)
-timeDF$year <- year(timeDF$created_at)
-timeDF$month <- date_format(to_date(timeDF$created_at), "MMMM")
-timeDF$weekday <- date_format(to_date(timeDF$created_at), "EEEE")
-
-createOrReplaceTempView(timeDF, "timeDF")
+createOrReplaceTempView(dfTime, "dfTime")
 ```
 
 
@@ -531,27 +508,11 @@ The resulting schema for the above dataframe consists of a string, datetime, int
 
 
 ```{r}
-timeDF <- gfg_data %>% dplyr::select(status_id, created_at) %>%
-  dplyr::filter(year(created_at) > "2016")
-timeDF$year <- year(timeDF$created_at)
-timeDF$month <- months(timeDF$created_at) %>% factor(levels = month.name)
-timeDF$weekday <- weekdays(timeDF$created_at) %>% factor(levels= c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
-
-time <- as.POSIXct(strptime(hms::hms(hours = hour(timeDF$created_at), minutes = minute(timeDF$created_at)), "%H:%M"), "UTC")
-x = as.POSIXct(strptime(c("050000", "105959", "110000", "155959", "160000",  "185959"), "%H%M%S"), "UTC")
-
-timeDF$time <- case_when(
-  between(time, x[1], x[2]) ~ "morning",
-  between(time, x[3], x[4]) ~ "afternoon",
-  between(time, x[5], x[6]) ~ "evening",
-  TRUE ~ "night"
-) %>% factor(levels = c("morning", "afternoon", "evening", "night"))
-
-timeDF %>% dplyr::select(-status_id) %>% slice_sample(n = 10) %>%
+dfTime %>% dplyr::select(-status_id) %>% slice_sample(n = 10) %>%
   dplyr::arrange(desc(created_at)) %>% head() %>%
-  kable(escape = F) %>%
-  kable_styling(full_width = F, html_font = "Roboto Condensed", font_size = 12, bootstrap_options = c("striped", "hover")) %>%
-  column_spec(1, extra_css = c("opacity: 0.5; font-weight: 400;"))
+  kable(escape = F) %>% 
+  kable_styling(full_width = F, html_font = "Roboto Condensed", font_size = 12, bootstrap_options = c("striped", "hover")) %>% 
+  column_spec(1, extra_css = c("opacity: 0.5;"))
 
 ```
 
@@ -560,33 +521,33 @@ timeDF %>% dplyr::select(-status_id) %>% slice_sample(n = 10) %>%
 
 ```sql
 SELECT weekday AS created_weekday, COUNT(*) AS n
-FROM timeDF
+FROM dfTime
 GROUP BY created_weekday
 ORDER BY n DESC;
 ```
 
 
 
-```{r, out.width="100%"}
-plot.weekday <- ggplot(dftweets, aes(x = week)) + geom_bar(stat = "count", width = 0.75, fill = "cornflowerblue", color = "navy") + theme_ipsum_rc(base_size = 8)
 
-```
+
 
 ```{r, message=FALSE, warning=FALSE, out.width="100%"}
-plotyear <- ggplot(timeDF) + geom_bar(mapping = aes(x = year), stat = "count", fill="#A0F5F7", alpha=0.85, color="black") + xlab("year") + ylab(NULL) + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), axis_title_face = "bold", axis_title_size = 10) + theme(axis.title.x = element_text(vjust = 0.25)) 
+plotYear <- ggplot(dfTime) + geom_bar(mapping = aes(x = year), stat = "count", fill="#A0F5F7", alpha=0.85, color="black") + xlab("year") + ylab(NULL) + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), axis_title_face = "bold", axis_title_size = 10) + theme(axis.title.x = element_text(vjust = 0.25)) 
 
-plotmonth <- ggplot(timeDF) + geom_bar(mapping = aes(x = factor(month, levels = month.name, labels = month.abb)), stat = "count", fill = "#2DDAF4", alpha=0.85, color="black") + xlab("month") + ylab(NULL) + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), axis_title_face = "bold", axis_title_size = 10)  + theme(axis.title.x = element_text(vjust = 0.25)) 
+plotMonth <- ggplot(dfTime) + geom_bar(mapping = aes(x = factor(month, levels = month.name, labels = month.abb)), stat = "count", fill = "#2DDAF4", alpha=0.85, color="black") + xlab("month") + ylab(NULL) + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), axis_title_face = "bold", axis_title_size = 10)  + theme(axis.title.x = element_text(vjust = 0.25)) 
 
-plotday <- ggplot(timeDF) + geom_bar(mapping = aes(x = factor(weekday, levels= c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"), labels =c("Sun", "Mon", "Tues", "Weds", "Thurs", "Fri", "Sat"))), stat = "count", fill = "#3C84F0", alpha=0.85, color="black") + xlab("weekday") + ylab(NULL) + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), axis_title_face = "bold", axis_title_size = 10)  + theme(axis.title.x = element_text(vjust = 0.25)) 
+plotDay <- ggplot(dfTime) + geom_bar(mapping = aes(x = factor(weekday, levels= c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"), labels =c("Sun", "Mon", "Tues", "Weds", "Thurs", "Fri", "Sat"))), stat = "count", fill = "#3C84F0", alpha=0.85, color="black") + xlab("weekday") + ylab(NULL) + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), axis_title_face = "bold", axis_title_size = 10)  + theme(axis.title.x = element_text(vjust = 0.25)) 
 
-plottime <- ggplot(timeDF) + geom_bar(mapping = aes(x = time), stat = "count", fill = "#00326F", alpha=0.85, color="black") + xlab("time") + ylab(NULL) + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), axis_title_face = "bold", axis_title_size = 10)  + theme(axis.title.x = element_text(vjust = 0.25)) 
+plotTime <- ggplot(dfTime) + geom_bar(mapping = aes(x = time), stat = "count", fill = "#00326F", alpha=0.85, color="black") + xlab("time") + ylab(NULL) + theme_ipsum_rc(base_size = 10, plot_margin = ggplot2::margin(10,10,10,10), axis_title_face = "bold", axis_title_size = 10)  + theme(axis.title.x = element_text(vjust = 0.25)) 
+```
 
-ggarrtime <- ggarrange(plotyear, plotmonth, plotday, plottime, ncol = 2, nrow = 2)
 
-ggarrtime <- annotate_figure(ggarrtime, top = text_grob("Number of Tweets by Datetime", family = "Roboto Condensed", size = 12, hjust = 2.15, vjust = 0.12, face = "bold"))
+```{r, message=FALSE, warning=FALSE, out.width="100%"}
+plotDateTime <- ggarrange(plotYear, plotMonth, plotDay, plotTime, ncol = 2, nrow = 2)
+plotDateTime <- annotate_figure(plotDateTime, top = text_grob("Number of Tweets by Datetime", family = "Roboto Condensed", size = 12, hjust = 1.75, vjust = 0.12, face = "bold"))
                
-ragg::agg_png(filename = "assets/static/reportDate.png", width = 8287, height = 5095, units = "px", res = 900)
-ggarrtime
+ragg::agg_png(filename = "assets/static/reportDate.png", width = 8287, height = 6095, units = "px", res = 1100)
+plotDateTime
 invisible(dev.off())
 knitr::include_graphics("assets/static/reportDate.png")
 ```
@@ -619,9 +580,8 @@ Here we want to extract hashtags from the content of the Tweets data. The follow
 
 ```sql
 SELECT hashtags, COUNT(*) AS hashtagcount
-FROM twitterTemp
+FROM twitterTemp 
 WHERE hashtags != 'NA'
-AND hashtags != '0'
 GROUP BY hashtags
 SORT BY hashtagcount DESC;
 ```
@@ -632,29 +592,38 @@ SORT BY hashtagcount DESC;
 
 
 ```{r, fig.show='hold', out.width="100%"}
-dfHashtags <- data.frame(dfHashtags) %>% head(12)
-colnames(dfHashtags) <- c("Hashtag", "Freq")
+topHashtag <- ggarrange(plotTags, tableTags, widths = c(2, 1), heights = c(1, 1), labels = c("Top 12 Most Used Hashtags"), font.label = list(size = 10, family = "Roboto"))
 
-plotHashtags <- dfHashtags %>%
-  ggplot(aes(y = Hashtag, x = Freq, fill = Freq)) +
-  geom_bar(stat = "identity", color = "black", cex = 0.25)  +
-  xlab(NULL) + ylab(NULL) +
-  theme_ipsum_rc(base_size = 9, plot_margin = margin(20,8,20,8),
-                  plot_title_size = 10) + 
-  theme(legend.position = "none")
-
-table.htags <- ggtexttable(dfHashtags, rows = NULL, theme = ttheme("mBlue", base_size = 8))
-
-ggarr2 <- ggarrange(plotHashtags, table.htags, widths = c(2, 1), heights = c(1, 1), labels = c("Top 12 Most Used Hashtags"), font.label = list(size = 10, family = "Roboto"))
-
-ragg::agg_png(filename = "assets/static/report2.png", width = 7087, height = 4595, units = "px", res = 900)
-ggarr2
+ragg::agg_png(filename = "assets/static/topHashtag.png", width = 7087, height = 4595, units = "px", res = 900)
+topHashtag
 invisible(dev.off())
-knitr::include_graphics("assets/static/report2.png")
+knitr::include_graphics("assets/static/topHashtag.png")
 
 ```
 
 
+
+
+
+
+
+
+```{r}
+#top.hashtags <- function (df, k=20) {
+
+hashtag_pat <- "#[A-Za-z0-9_]+"
+hashtag <- gfg_data$text %>% str_extract_all(hashtag_pat)
+hashtag_word <- unlist(hashtag)
+hashtag_word <- tolower(hashtag_word)
+#hashtag_word <- gsub("[[:punct:]ー]", "", hashtag_word)
+
+# as.data.frame(hashtag_word) %>%
+#     count(hashtag_word, sort = TRUE) %>%
+#     top_n(20) %>%
+#     ggplot(aes(x = reorder(hashtag_word, n), y = n)) +
+#     geom_col() +
+#     coord_flip()
+```
 
 
 
@@ -675,80 +644,55 @@ knitr::include_graphics("assets/static/report2.png")
 </div>
 
 
-<span class="myhighlight2">Python Code: </span>
+Figuring out what words are most common in Elon Musk's tweets involves text mining tasks. Using tidy data principles, the first step is to clean up the text from our dataset by using lowercase and removing punctuation, usernames, links, etc. We then use various R tidy tools to convert the text to tidy formats and remove stop words.
 
-```python
-import pyspark.sql.functions as f
-textDF = df.select('text', 'status_id', 'created_at')
 
-# Count and group word frequencies on text, when split by space comma
-textDF.withColumn('word', f.explode(f.split(f.col('text'), ' '))) \
-  .groupBy('word') \
-  .count() \
-  .sort('count', ascending=False)
-```
 
 <span class="myhighlight2">R Code: </span>
 
 ```{r, echo=TRUE, eval=FALSE}
-reg <- c("&amp;|&lt;|&gt;", "[^\x01-\x7F]",
-         "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)")
+library(tidytext)
+library(stringr)
 
-df %>% select('text', 'status_id') %>%
-  mutate(text = str_remove_all(text, reg)) %>%
+dfWords <- df %>%
+  dplyr::mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
+         text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
+         text = str_remove_all(text, "[^\x01-\x7F]")) %>% 
   unnest_tokens(word, text, token = "tweets") %>%
-  filter(!word %in% stop_words$word,
-         !word %in% str_remove_all(stop_words$word, "'"),
-         str_detect(word, "[a-z]"),
-         !str_detect(word, "^#@\\S+")) %>%
-  count(word, sort = TRUE)
+  dplyr::filter(!word %in% stop_words$word,
+        !word %in% str_remove_all(stop_words$word, "'"),
+        str_detect(word, "[a-z]"),
+        !str_detect(word, "^#"),         
+        !str_detect(word, "@\\S+")) %>%
+  dplyr::count(word, sort = TRUE)
+```
+
+
+In the above command, the pattern matching function `str_remove_all()` removes unwanted text and the `unnest_tokens()` function splits the text of each tweet into tokens, using a one-word-per-row format. We then use the `str_detect()` function to filter out words by removing stop words, unicode characters, and whitespace.
+
+```{r, out.width="95%"}
+
+top40Words <- ggarrange(plot.lolli, plot.circle, ncol = 2, widths = c(3, 4), heights = c(1, 1))
+
+ragg::agg_png(filename = "assets/static/top40Words.png", width = 8887, height = 4695, units = "px", res = 1300)
+plot.lolli2
+invisible(dev.off())
+knitr::include_graphics("assets/static/top40Words.png")
+
+
+
+
 ```
 
 
 
-
-
-
-
-
-
 ```{r, out.width="100%"}
-dfSentWords <- data.frame(df.words) %>% head(15)
- 
+top15Words <- ggarrange(plotWords, plot.circle, ncol = 2, widths = c(3, 4), heights = c(1, 1), labels = c("Top 15 Most Used Words"), font.label = list(size = 10, family = "Roboto"))
 
-plot.lolli <- ggplot(dfSentWords, aes(x = word, y = n, fill = word)) +
-  geom_linerange(
-    aes(x = word, ymin = 0, ymax = n),
-    color = "lightgray", size = 1.5) +
-  geom_point(aes(color = word), size = 7, pch = 21) +
-  geom_text(aes(label = n), color = "white", size = 2.5) +
-  scale_color_manual(values = mypal5) +
-  scale_fill_manual(values = mypal5) +
-  theme_pubclean() +
-  coord_flip() +
-  theme(legend.position = "none")
-
-plotWords <- dfSentWords %>%
-  ggplot(aes(y = reorder(word, -n), x = n, fill = n)) +
-  geom_histogram(stat = "identity", color = "black", cex = 0.25) +
-  xlab(NULL) +
-  ylab(NULL) +
-  theme_ipsum_rc(base_size = 9, plot_margin = margin(20, 8, 20, 8), plot_title_size = 10) +
-  theme(legend.position = "none")
-
-table.words <- ggtexttable(dfSentWords, rows = NULL, theme = ttheme("mBlue", base_size = 8))
-
-ggarr3 <- ggarrange(plotWords, table.words, plot.lolli, 
-                    ncol = 2, nrow = 2,
-                    widths = c(2, 1), heights = c(1, 1), 
-                    labels = c("Top 15 Most Used Words"), 
-                    font.label = list(size = 10, family = "Roboto"))
-
-
-ragg::agg_png(filename = "assets/static/report3.png", width = 7087, height = 4595, units = "px", res = 900)
-ggarr3
+ragg::agg_png(filename = "assets/static/top15Words.png", width = 9087, height = 4195, units = "px", res = 1100)
+top15Words
 invisible(dev.off())
-knitr::include_graphics("assets/static/report3.png")
+knitr::include_graphics("assets/static/top15Words.png")
 ```
 
 
@@ -769,10 +713,6 @@ knitr::include_graphics("assets/static/report3.png")
 
 ## Sentiment Analysis
 
-
-```{r}
-source("scripts/sentiment.R")
-```
 
 
 Here we use the `syuzhet` R package to iterate over a vector of strings consisting of the text from all of Elon Musk's tweets in our dataset. To obtain the vector of tweet text, the plain_tweets() function from the `rtweet` package is used to clean up the tweets character vector to cleaned up, plain text. We then pass this vector to the get_sentiment() function, which consequently returns the sentiment values based on the custom sentiment dictionary developed from a collection of human coded sentences.
@@ -797,68 +737,42 @@ df.sentiment <- gfg_data %>%
 
 
 
-```{r}
-sentPreview <- df.sentiment %>%
-  dplyr::arrange(desc(days)) %>%
-  head(5) %>%
-  kable(col.names = c("date", "sentiment")) %>%
-  kable_styling(full_width = FALSE, html_font = "Roboto Condensed", bootstrap_options = c("striped", "hover")) %>%
-  row_spec(0, extra_css = c("font-size: 10pt; text-transform: uppercase; font-weight: 400; letter-spacing: 0.5px; text-shadow: 1px 1px 1px rgb(0 0 0 / 20%); font-family: Roboto;")) %>%
-  column_spec(1, extra_css = c("color: grey;"))
-```
-
-
-
-
 ```{r, warning=FALSE, message=FALSE, out.width="100%"}
 ggplotly(tt_sent)
-# ggplotly(plot.sent3)
 ```
 
 
-ext Mining: Sentiment Analysis
-Once we have cleaned up our text and performed some basic word frequency analysis, the next step is to understand the opinion or emotion in the text. This is considered sentiment analysis and this tutorial will walk you through a simple approach to perform sentiment analysis.
-
-To perform sentiment analysis we need to have our data in a tidy format. The following converts all seven Harry Potter novels into a tibble that has each word by chapter by book. See the tidy text tutorial for more details.
 
 
+Extending the above sentiment analysis, the next step is to understand the opinion or emotion in the text. First, we must clean the text from our dataset so that it's in a tidy format. We accomplish this using the R function `gsub()` to replace unwanted text and the `get_nrc_sentiment()` function to get the emotions and valences from the NRC sentiment dictionary for each word from all of Musk's tweet. 
 
-Using the same package, we now use the `get_nrc_sentiment()` function to get the emotions and valences from the NRC sentiment dictionary for each tweet. First, we must clean the text column from our dataset  
-
-This syuzhet function calculates the presence of emotions and their valence for each tweet, where the text is cleaned so that each row holds a sentence from our dataset. 
-
-
-The columns include one for each emotion type as well as a positive or negative valence. The ten columns are as follows: "anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust", "negative", "positive."
 
 <span class="myhighlight2">R Code: </span>
 
 ```{r, eval=FALSE, echo=TRUE}
-cleanTweet  = as.vector(df$text)
-cleanTweet = gsub("rt|RT", "", cleanTweet)
-cleanTweet = gsub("http\\w+", "", cleanTweet)
-cleanTweet = gsub("<.*?>", "", cleanTweet)
-cleanTweet = gsub("@\\w+", "", cleanTweet)
-cleanTweet = gsub("[[:punct:]]", "", cleanTweet)
-cleanTweet  = gsub("\r?\n|\r", " ", cleanTweet)
-cleanTweet = gsub("[[:digit:]]", "", cleanTweet)
-cleanTweet = gsub("[ |\t]{2,}", "", cleanTweet)
-cleanTweet = gsub("^ ", "", cleanTweet)
-cleanTweet = gsub(" $", "", cleanTweet)
+txt <- c("rt|RT", "http\\w+", "<.*?>", "@\\w+", "[[:punct:]]", "\r?\n|\r", "[[:digit:]]", "[ |\t]{2,}", "^ ", " $")
 
-textSentiment <- get_nrc_sentiment(cleanTweet)
+cleanTweet <- as.vector(df$text)
+cleanTweet <- grep::gsub(txt, "", cleanTweet)
+
+textSentiment <- syuzhet::get_nrc_sentiment(cleanTweet)
 nrc_sentiment <- cbind(df, textSentiment) %>% 
   dplyr::select(created_at, anger, anticipation, disgust, fear, 
                 joy, sadness, surprise, trust, negative, positive)
 ```
 
 
+In the above command, the gsub function replaces all occurrences of the given patterns and the get_nrc_sentiment function calculates the presence of eight different emotions and their corresponding valence. The resulting columns include the eight emotions `disgust`, `fear`, `joy`, `sadness`, `surprise`, `trust` and their respective `positive` or `negative` valence.
+
+
+
 
 
 ```{r, out.width="100%"}
-ggsenti1 <- ggarrange(plot.sent1, plot.sent1B, widths = c(5, 4)) +
-  labs(subtitle = "Sentiment")
+ggsenti1 <- ggarrange(ggarrange(plot.sent1, plot.sent1B, widths = c(5, 4)),
+                      plot.ridges1, nrow = 2, ncol = 1, heights = c(6, 6))
 
-ragg::agg_png(filename = "assets/static/senti1.png", width = 8087, height = 4295, units = "px", res = 900)
+ragg::agg_png(filename = "assets/static/senti1.png", width = 8087, height = 6895, units = "px", res = 1100)
 ggsenti1
 invisible(dev.off())
 knitr::include_graphics("assets/static/senti1.png")
@@ -867,22 +781,13 @@ knitr::include_graphics("assets/static/senti1.png")
 
 
 
-```{r}
-# ggsenti3 <- ggarrange(plot.ridges1, plot.ridges2, widths = c(5, 4))
-
-ragg::agg_png(filename = "assets/static/ridgeplot.png", width = 8687, height = 5495, units = "px", res = 900)
-plot.ridges1
-invisible(dev.off())
-knitr::include_graphics("assets/static/ridgeplot.png")
-```
-
 
 
 ```{r, out.width="100%"}
-ggsenti2 <- ggarrange(plot.sent2, plot.sent3, ncol = 2, nrow = 1, align = "hv", widths = c(4, 3))
+#ggsenti2 <- ggarrange(plot.sent2, plot.sent3, ncol = 2, nrow = 1, align = "hv", widths = c(4, 3))
 
-ragg::agg_png(filename = "assets/static/senti2.png", width = 8887, height = 3095, units = "px", res = 900)
-ggsenti2
+ragg::agg_png(filename = "assets/static/senti2.png", width = 8887, height = 6895, units = "px", res = 1100)
+plot.sent2
 invisible(dev.off())
 knitr::include_graphics("assets/static/senti2.png")
 ```
@@ -892,17 +797,21 @@ knitr::include_graphics("assets/static/senti2.png")
 
 
 ```{r}
-plot.sent2A
-plot.sent2B
-plotRadar
+# ragg::agg_png(filename = "assets/static/senti3.png", width = 8887, height = 6095, units = "px", res = 900)
+# plot.sent2A
+# invisible(dev.off())
+# knitr::include_graphics("assets/static/senti3.png")
+
+radarplot <- (myradarChart(radarDF2, colors_border, colors_in, mytitle))
+
+# plot.sent2A
+# plot.sent2B
+# plotRadar
 ```
 
 
 
 
-```{r}
-myradarChart(radarDF2, colors_border, colors_in, mytitle)
-```
 
 
 

@@ -93,18 +93,14 @@ body {
     color: #333;
 }
 
-b,
-strong {
-    padding: 4px 6px;
-    background-color: #ebecf0;
-    border-radius: 6px;
-    text-shadow: 0.6px 0.6px 0 #fff;
-    color: #61677c;
+
+b, strong {
+      font-size: 10.25pt;
+    font-weight: 600;
+    color: hsl(213deg 50% 34%);
     font-family: 'Roboto';
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    box-shadow: 1.5px 1.5px 2.5px #babecc, -2px -2px 5px #fff;
+    text-shadow: 0.25px 0.25px 0.2px hsl(0deg 0% 10%), 0.275px 0.275px 0.025px hsl(0deg 0% 10%), -0.2px -0.2px 0px hsl(0deg 0% 85%);
+    letter-spacing: 0.25px;
 }
 
 a {
@@ -116,16 +112,17 @@ hr {
 }
 
 .myhighlight {
-    font-family: 'Roboto';
-    padding: 2px 3px;
+  font-family: 'Roboto';
     border-radius: 5px;
-    text-shadow: 0 1px 1px hsl(0deg 0% 10% / 65%), 0.04em 0.04em 0px hsl(0deg 0% 35% / 50%), -0.1px -0.1px 0.1px hsl(217deg 100% 90%);
+    text-shadow: 0 1px 1px hsl(0deg 0% 10% / 65%), 0.04em 0.04em 0px hsl(0deg 0% 45% / 50%), -0.25px -0.25px 0.05px hsl(217deg 100% 95% / 85%), 0.25px 0.25px 0.25px hsl(0deg 0% 100% / 95%), 0.35px 0.35px 0.2px hsl(0deg 0% 90% / 85%), 0 -1px 0px hsl(0deg 0% 95% / 25%), 0 1px 0.125px hsl(0deg 0% 5% / 85%);
     color: #f5f5f5;
-    font-size: 10pt;
-    font-weight: 500;
+    font-size: 9pt;
     letter-spacing: 0.5px;
     background-image: linear-gradient(to right, #25aae1, #4481eb, #04befe, #3f86ed);
     box-shadow: 0.875px 0.875px 1.8px 0 rgb(0 0 0 / 30%), -0.75px -0.75px 1.5px 0 hsl(216deg 16% 94%), inset -0.5px -0.5px 1px 0 rgb(0 0 0 / 30%), inset 0.5px 0.5px 1px 0 hsl(220deg 23% 95%);
+    padding: 2.5pt 3.85pt;
+    font-weight: 300;
+    text-shadow: 0px 0px 1px hsl(0deg 0% 30% / 35%), 0.034em 0.034em 1px hsl(0deg 0% 75% / 50%), 0.0125px -0.125px 0px hsl(0deg 0% 100% / 85%), 0.025px 0.425px 0px hsl(0deg 0% 100% / 95%), 0.25px 0.6px 0px hsl(0deg 0% 100% / 85%), 0px -0.88px 0.0125px hsl(0deg 0% 100% / 20%), 0px 1px 0.5px hsl(0deg 0% 5% / 85%), 0.7px 1.2px 0.35px hsl(0deg 0% 5% / 85%) !important;
 }
 
 .myhighlight2 {
@@ -228,15 +225,34 @@ a.navbar-brand {
 
 .table strong {
     font-size: inherit;
-    font-weight: 600;
+    font-weight: 400;
     color: #60667b;
     font-family: roboto condensed !important;
     background: none;
     box-shadow: none;
-    content: "@";
     padding: 0;
+    font-size: 9.5px;
+    text-shadow: 0.25px 0.25px 0.2px hsl(0deg 0% 10%), 0.275px 0.275px 0.025px hsl(0deg 0% 10%), -0.2px -0.2px 0px hsl(0deg 0% 85%);
 }
 
+.table span.citation {
+    color: transparent;
+    margin: -3.5px;
+}
+
+.table strong::before {
+    content: "@";
+    color: hsl(204deg 87% 53%);
+    font-weight: 500;
+    font-family: 'Roboto';
+    vertical-align: text-bottom;
+}
+
+
+img {
+  padding-bottom: 12pt !important;
+  padding-top: 12pt !important;
+}
 
 /* ---- pre code ---- */
 
@@ -253,21 +269,28 @@ pre {
 }
 
 pre code {
-    /*font-family: 'Inconsolata', monospace;*/
-    font-family: Consolas;
-    font-size: 9.5pt !important;
+    font-family: 'Inconsolata', monospace;
+    /*font-family: Consolas;*/
+    font-size: 9.75pt !important;
     color: hsl(201deg 30% 96%);
     box-shadow: none !important;
     text-shadow: 0.6px 0.6px 0 #000000;
     text-shadow: 0 1px rgb(0 0 0 / 30%);
+    letter-spacing: normal !important;
+    font-weight: normal !important;
 }
 
 code {
-    font-family: 'Inconsolata';
-    box-shadow: 1.5px 1.5px 2.5px #babecc, -2px -2px 5px #fff;
+    padding: 3px 4px;
+    background-color: #ebecf0;
+    border-radius: 6px;
     text-shadow: 0.6px 0.6px 0 #fff;
-    background-color: hsl(228deg 14% 93%);
-    font-size: 11pt;
+    color: #61677c;
+    font-family: 'Roboto';
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    box-shadow: 1.125px 1.125px 2.125px #babecc, -1px -1px 2.5px hsl(0deg 0% 98%);
 }
 
 /* ---- datasource2 style ---- */
@@ -473,45 +496,38 @@ blockquote {
 
 pre.python::before {
     content: "python";
-    color: #8798a9;
     font-size: 7.5pt;
-    background: #f5f2f0;
     background: rgba(224,224,224,.2);
     box-shadow: 0 2px 0 0 rgb(0 0 0 / 20%);
-    justify-content: flex-end;
-    display: block;
-    color: black;
+    justify-content: center;
+    color: #ccc;
     position: relative;
-    top: -7px;
+    top: -10px;
     float: right;
     display: flex;
     overflow: hidden;
     width: 38px;
-    margin: -2pt -6pt;
+    margin: 0pt -6pt;
     padding: 0.5px 2pt 0.5px 2pt;
     border-radius: 4pt;
     font-weight: 300;
     font-family: rubik;
 }
 
-
 pre.sql::before {
     content: "sql";
-    color: #8798a9;
     font-size: 7.5pt;
-    background: #f5f2f0;
     background: rgba(224,224,224,.2);
     box-shadow: 0 2px 0 0 rgb(0 0 0 / 20%);
-    justify-content: flex-end;
-    display: block;
-    color: black;
+    justify-content: center;
+    color: #ccc;
     position: relative;
-    top: -7px;
+    top: -10px;
     float: right;
     display: flex;
     overflow: hidden;
-    width: 36px;
-    margin: -2pt -6pt;
+    width: 24px;
+    margin: 0pt -6pt;
     padding: 0.5px 2pt 0.5px 2pt;
     border-radius: 4pt;
     font-weight: 300;
@@ -520,27 +536,23 @@ pre.sql::before {
 
 pre.r::before {
     content: "r";
-    color: #8798a9;
     font-size: 7.5pt;
-    background: #f5f2f0;
     background: rgba(224,224,224,.2);
     box-shadow: 0 2px 0 0 rgb(0 0 0 / 20%);
-    justify-content: flex-end;
-    display: block;
-    color: black;
+    justify-content: center;
+    color: #ccc;
     position: relative;
-    top: -7px;
+    top: -10px;
     float: right;
     display: flex;
     overflow: hidden;
-    width: 36px;
-    margin: -2pt -6pt;
+    width: 18px;
+    margin: 0pt -6pt;
     padding: 0.5px 2pt 0.5px 2pt;
     border-radius: 4pt;
     font-weight: 300;
     font-family: rubik;
 }
-
 
 .hljs-built_in, .hljs-models {
     font-weight: 500;
@@ -549,9 +561,22 @@ pre.r::before {
 }
 
 .hljs-keyword {
-    color: #85F4FA !important;
-    font-weight: 600;
+    color: hsl(183deg 100% 50%) !important;
+    font-weight: 700;
 }
+
+.hljs-comment {
+    color: hsl(0deg 0% 60%);
+    font-style: normal !important;
+    font-weight: 300;
+}
+
+.hljs-string {
+    color: #219fd5;
+    color: hsl(219deg 45% 62%) !important;
+    font-weight: 400;
+}
+
 
 .hljs-keyname {
     color: #CDBBFF !important;
@@ -559,32 +584,54 @@ pre.r::before {
 }
 
 .hljs-envfunc {
-  color: #c5e478 !important;
-  font-weight: 400 !important;
+    color: hsl(213deg 100% 70%) !important;
+    font-weight: 600 !important;
+}
 
+span.hljs-renvfunc {
+    color: hsl(219deg 92% 64%);
+    color: hsl(215deg 100% 64%) !important;
+    font-weight: 600;
+}
+
+span.hljs-rkeyname {
+    font-weight: 600;
+    color: hsl(183deg 100% 50%);
+}
+
+span.hljs-rdata {
+    color: darkseagreen;
+    color: lightgreen;
+    color: magenta;
+    color: violet;
+    color: turquoise;
+    /* color: mediumspringgreen; */
+}
+
+span.hljs-rkeyword {
+      color: hsl(112deg 65% 75%) !important;
+    font-weight: 300 !important;
+}
+
+span.hljs-rkeyword {
+    color: hsl(278deg 100% 70%) !important;
+    font-weight: 400 !important;
 }
 
 .hljs-literal {
-    color: hsl(200deg 18% 45%);
-    font-weight: 300;
+    color: lightgreen;
+    color: hsl(270deg 100% 70%);
+
 }
 
 .hljs-number {
-    font-weight: 600;
-    /* color: #60FDFF; */
-    /* color: #D682EC; */
-    /* color: #2AA198; */
-    /* color: #00FF9C; */
-    color: #ADDB67 !important;
+    font-weight: 500;
+    color: hsl(112deg 65% 75%) !important;
 }
 
 .hljs-keyfunc {
-  color: #219fd5 !important;
+    color: hsl(248deg 91% 75%) !important;
+    font-weight: 400;
 }
 
-.hljs-string {
-    font-weight: 300;
-    color: #98C379;
-
-}
 

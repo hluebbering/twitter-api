@@ -40,9 +40,11 @@ nrc_sentiment <- read_rds("nrc_sentiment.rds") %>%
 library(paletteer)
 mypal1 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 9)
 mypal2 <- get_palette(c(paletteer_d("lisa::CyTwombly")), 8)
-mypal3 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 5)
+mypal3 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 15)
 mypal4 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 3)
-mypal5 <- get_palette(c(paletteer_d("lisa::CyTwombly")), 18)
+mypal5 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 5)
+mypal6 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 8)
+
 
 df.sent1 <- gather(nrc_sentiment, "sentiment", "values", 2:9) %>% 
   dplyr::group_by(sentiment) %>%
@@ -73,7 +75,7 @@ df.sent2 <- data.frame(df.sent2)
 
 plot.sent2 <- ggplot(data = df.sent2) + 
   geom_smooth(mapping = aes(x = created_at, y = values, color = sentiment), method = "loess", span=0.1, size = 1) + 
-  scale_color_manual(values = mypal2) + 
+  scale_color_manual(values = mypal6) + 
   ylab(NULL) + xlab(NULL) + 
   theme_ipsum_rc(base_size = 8, axis_title_size = 8, axis_text_size = 8, plot_margin = margin(5,5,5,5)) + 
   scale_y_continuous(expand=c(0, 0)) + 
@@ -143,14 +145,16 @@ library(ggridges)
 plot.ridges1 <- ggplot(df.sent2A, aes(x = n, y = fct_reorder(sentiment, n), fill = fct_reorder(sentiment, n))) +
   geom_density_ridges(alpha = .85, color = "black", scale = 2.5, rel_min_height = .0001, cex = 0.3) +
   guides(fill = FALSE) +
-  theme_ridges() +
+  theme_ridges(font_size = 8, font_family = "Roboto Condensed") +
+  theme_ipsum_rc(plot_margin = ggplot2::margin(t=30, r=20, b=0, l=20)) +
   xlab(NULL) +
   ylab(NULL) +
   scale_fill_manual(values = mypal1) +
-  theme_minimal(base_size = 8, base_family = "Roboto Condensed") +
-  theme(axis.text.x = element_text(size = 8), axis.text.y = element_text(size = 12, color = "black", family = "Roboto Condensed")) +
-  scale_y_discrete(expand = c(0.01, 0)) +
-  scale_x_continuous(expand = c(0.01, 0))
+  #theme_minimal(base_size = 8, base_family = "Roboto Condensed") +
+  theme(axis.text.x = element_text(size = 8), axis.text.y = element_text(size = 12, color = "black", family = "Roboto Condensed"),
+        plot.margin = ggplot2::margin(t=30, r=30, b=0, l=30)) +
+  scale_y_discrete(expand = c(0.005, 0)) + 
+  scale_x_continuous(expand = c(0.085, 0))
 
 plot.ridges2 <- ggplot(df.sent2A, aes(x = n, y = factor(year(created_at), levels = c("2022", "2021", "2020", "2019", "2018")), fill = factor(year(created_at)))) +
   geom_density_ridges(alpha = .85, color = "black", scale = 2.5, rel_min_height = .001, cex = 0.3) +
@@ -244,10 +248,9 @@ radarDF2 <- nrc_sentiment %>%
 
 # Prepare title
 mytitle <- c("2018", "2019", "2020", "2021", "2022")
-colors_border = colormap(colormap = colormaps$viridis, 
-                         nshades = 5, alpha = 1)
-colors_in = colormap(colormap = colormaps$viridis,
-                     nshades = 5, alpha = 0.3)
+colors_border = c("#001964", "#124F94", "#2894DA", "#01C4E5", "#A0F5F7")
+colors_in = c("#0019644c", "#124F944c", "#2894DA4c", "#01C4E54c", "#A0F5F74c")
+  #colormap(colormap = mypal5, nshades = 5, alpha = 0.3)
 
 
 myradarChart <- function(radarDF2, colors_border, colors_in, mytitle) {

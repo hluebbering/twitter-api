@@ -33,14 +33,14 @@ use_oauth_token(twitter_token)
 
 
 # users <- "elonmusk"
-
-# musktweets6 <-
+# 
+# musktweets7 <-
 #   search_fullarchive(
 #     paste0("from:", users, collapse = " OR "),
 #     n = 2000,
 #     env_name = "devv",
-#     fromDate = "202205090000",
-#     toDate = "202205280000")
+#     fromDate = "202205272255",
+#     toDate = "202206210000")
 
 # musktweets5 <-
 #   search_fullarchive(
@@ -50,5 +50,5 @@ use_oauth_token(twitter_token)
 #     fromDate = "201001010000",
 #     toDate = "201201010000")
 
-# save_as_csv(musktweets5, file_name = "data/musktweets2010")
+# save_as_csv(musktweets7, file_name = "data/musktweets202206.csv")
 
