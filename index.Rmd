@@ -596,12 +596,12 @@ hashtag_word <- unlist(hashtag)
 hashtag_word <- tolower(hashtag_word)
 hashtag_word <- gsub("[[:punct:]ー]", "", hashtag_word)
 
-as.data.frame(hashtag_word) %>%
-  dplyr::count(hashtag_word, sort = TRUE) %>%
-  top_n(20) %>%
-  ggplot(aes(x = reorder(hashtag_word, n), y = n)) +
-  geom_col() +
-  coord_flip()
+# as.data.frame(hashtag_word) %>%
+#   dplyr::count(hashtag_word, sort = TRUE) %>%
+#   top_n(20) %>%
+#   ggplot(aes(x = reorder(hashtag_word, n), y = n)) +
+#   geom_col() +
+#   coord_flip()
 ```
 
 
@@ -672,7 +672,7 @@ dfWords <- df %>%
 In the above command, the pattern matching function `str_remove_all()` removes unwanted text, and the `unnest_tokens()` function splits the text of each tweet into tokens, using a one-word-per-row format. We then use the `str_detect()` function to filter out words by removing stop words, unicode characters, and whitespace.
 
 
-```{r, out.width="95%"}
+```{r, out.width="100%"}
 
 top40Words <- ggarrange(plot.lolli, plot.circle, ncol = 2, widths = c(3, 4), heights = c(1, 1))
 

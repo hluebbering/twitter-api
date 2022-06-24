@@ -333,8 +333,9 @@ dfTags <- gfg_data$hashtags %>%
 
 
 plotTags <- head(dfTags, 12) %>%
-  ggplot(aes(y = Hashtag, x = Freq, fill = Freq)) +
+  ggplot(aes(y = Hashtag, x = Freq, fill = as.factor(Freq))) +
   geom_bar(stat = "identity", color = "black", cex = 0.25)  +
+  scale_fill_manual(values = mypal8) +
   xlab(NULL) + ylab(NULL) +
   theme_ipsum_rc(base_size = 9, plot_margin = margin(20,8,20,8), plot_title_size = 10) + 
   theme(legend.position = "none")
