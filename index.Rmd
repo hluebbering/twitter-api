@@ -112,7 +112,7 @@ kable(dfvar, escape = FALSE, col.names = NULL) %>% kable_styling(font_size = 12,
 
 
 
-Once you have your twitter app setup and loaded the `rtweet` package in R, you can run the following command to generate a token for the Twitter data. The first thing that you need to setup in your code is your authentication and then create a token that authenticates access to tweets.
+After setting up the Twitter application and loading the `rtweet` package in R, we use the following command to create a token with application authentication, allowing access to Twitter data. 
 
 
 
@@ -126,7 +126,7 @@ use_oauth_token(twitter_token) # authenticate via web browser
 ```
 
 
-Now we search Twitter's full archive API. We run the `search_fullarchive` command in order to be able to access historical tweets from a user. The example below captures all of Elon Musk's tweets from January 01, 2010 to May 28, 2022.
+Now, we search Twitter's full archive API, running the `search_fullarchive` command for access to user historical tweets. The example below captures Elon Musk's tweets from January 01, 2010, to May 28, 2022.
 
 
 ```{r, echo=TRUE, eval=FALSE}
@@ -223,8 +223,7 @@ Users can perform relational procedures on DataFrames using a domain-specific la
 </div>
 
 
-To track Elon Musk's engagement with people on twitter, we want to look into tweets containing conversations with and directed to other users. We begin by unpacking information for each of Elon Musk's tweets that mention another person's username. Specifically, **mentions** are a particular type of tweet containing other account usernames, preceded by the "@" symbol. 
-
+To track Elon Musk's engagement with people on Twitter, we want to look into tweets containing conversations with and directed to other users. We begin by unpacking information for each of Elon Musk's tweets that mention another person's username. Specifically, **mentions** are a type of tweet containing other account usernames, preceded by the "@" symbol. 
 
 
 
@@ -305,7 +304,7 @@ knitr::include_graphics("assets/static/userMentions.png")
 
 
 
-Hence, SpaceX and Tesla are the most frequently mentioned users in Musk's tweets. Linking conversations together, a **reply** is a type of tweet sent in direct response to another user's tweet. Similar to mentions, replies allow users to direct tweets toward other twitter users and interact in conversations. Following the same general procedure above, we obtain the following results.
+SpaceX and Tesla are the most frequently mentioned users in Musk's tweets. Linking conversations together, a **reply** is a type of tweet sent in direct response to another user's tweet. Similar to mentions, replies allow users to direct tweets toward other twitter users and interact in conversations. Following the same general procedure above, we obtain the following results.
 
 
 ```{r, out.width="100%"}
@@ -344,7 +343,7 @@ knitr::include_graphics("assets/static/topReplies.png")
 - What is the percentage of different types of tweets (simple tweet, reply, retweet, quoted tweet) to their overall number of tweets?
 </div>
 
-The different type of tweets that exist are **general tweets**, **mentions**, **replies**, **retweets**, and **quotes**. The mention and reply tweet types are already defined and analyzed in the previous section. General tweets are original twitter posts containing text, photos, a GIF, and/or video, but do **not** include any mentions, replies, retweets, or quotes. Lastly, retweets and quotes are both re-postings of another person's tweet, although quotes allow users to post another person's tweet with their own added comment.
+The different type of tweets that exist are **general tweets**, **mentions**, **replies**, **retweets**, and **quotes**. The mention and reply tweet types are already defined in the previous section. General tweets are original twitter posts containing text, photos, a GIF, and/or video, but do **not** include any mentions, replies, retweets, or quotes. Lastly, retweets and quotes are both re-postings of another person's tweet, although quotes allow users to post another person's tweet with their own added comment.
 
 
 <span class="myhighlight2">R Code: </span>
@@ -489,7 +488,7 @@ topRetweets <- topRetweets + plot_annotation(
 #### Datetime Datatype
 
 
-The following SQL query parses the `created_at` datetime column to display the year, month, day, and hour for each tweet.
+The following parses the `created_at` datetime column to display the year, month, day, and hour for each tweet.
 
 
 
@@ -572,7 +571,7 @@ knitr::include_graphics("assets/static/reportDate.png")
 
 
 
-Here we want to extract hashtags from the content of the Tweets data. The following command unpacks the `hashtags` column into an array of strings, followed by counting how many unique hashtags used by Elon Musk.
+Here we extract hashtags, all words preceded with a `#` character, from the content of the Tweets data. The following command unpacks the `hashtags` column into an array of strings, followed by counting how many unique hashtags used by Elon Musk.
 
 
 
@@ -587,6 +586,23 @@ SORT BY hashtagcount DESC;
 ```
 
 
+
+```{r}
+#top.hashtags <- function (df, k=20) {
+
+hashtag_pat <- "#[A-Za-z0-9_]+"
+hashtag <- gfg_data$text %>% str_extract_all(hashtag_pat)
+hashtag_word <- unlist(hashtag)
+hashtag_word <- tolower(hashtag_word)
+hashtag_word <- gsub("[[:punct:]ー]", "", hashtag_word)
+
+as.data.frame(hashtag_word) %>%
+  dplyr::count(hashtag_word, sort = TRUE) %>%
+  top_n(20) %>%
+  ggplot(aes(x = reorder(hashtag_word, n), y = n)) +
+  geom_col() +
+  coord_flip()
+```
 
 
 
@@ -608,22 +624,7 @@ knitr::include_graphics("assets/static/topHashtag.png")
 
 
 
-```{r}
-#top.hashtags <- function (df, k=20) {
 
-hashtag_pat <- "#[A-Za-z0-9_]+"
-hashtag <- gfg_data$text %>% str_extract_all(hashtag_pat)
-hashtag_word <- unlist(hashtag)
-hashtag_word <- tolower(hashtag_word)
-#hashtag_word <- gsub("[[:punct:]ー]", "", hashtag_word)
-
-# as.data.frame(hashtag_word) %>%
-#     count(hashtag_word, sort = TRUE) %>%
-#     top_n(20) %>%
-#     ggplot(aes(x = reorder(hashtag_word, n), y = n)) +
-#     geom_col() +
-#     coord_flip()
-```
 
 
 
@@ -644,7 +645,7 @@ hashtag_word <- tolower(hashtag_word)
 </div>
 
 
-Figuring out what words are most common in Elon Musk's tweets involves text mining tasks. Using tidy data principles, the first step is to clean up the text from our dataset by using lowercase and removing punctuation, usernames, links, etc. We then use various R tidy tools to convert the text to tidy formats and remove stop words.
+Figuring out the most common words in Elon Musk's tweets involves text mining tasks. The first step is to clean up the text from our dataset by using lowercase and removing punctuation, usernames, links, etc. We then use R tidy tools to convert the text to tidy formats and remove stop words.
 
 
 
@@ -668,13 +669,14 @@ dfWords <- df %>%
 ```
 
 
-In the above command, the pattern matching function `str_remove_all()` removes unwanted text and the `unnest_tokens()` function splits the text of each tweet into tokens, using a one-word-per-row format. We then use the `str_detect()` function to filter out words by removing stop words, unicode characters, and whitespace.
+In the above command, the pattern matching function `str_remove_all()` removes unwanted text, and the `unnest_tokens()` function splits the text of each tweet into tokens, using a one-word-per-row format. We then use the `str_detect()` function to filter out words by removing stop words, unicode characters, and whitespace.
+
 
 ```{r, out.width="95%"}
 
 top40Words <- ggarrange(plot.lolli, plot.circle, ncol = 2, widths = c(3, 4), heights = c(1, 1))
 
-ragg::agg_png(filename = "assets/static/top40Words.png", width = 8887, height = 4695, units = "px", res = 1300)
+ragg::agg_png(filename = "assets/static/top40Words.png", width = 9087, height = 5295, units = "px", res = 1600)
 plot.lolli2
 invisible(dev.off())
 knitr::include_graphics("assets/static/top40Words.png")

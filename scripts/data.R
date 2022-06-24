@@ -20,8 +20,8 @@ library(paletteer)
 library(packcircles)
 
 #### DEFINE COLORS & LAYOUTS
-mypal5 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 40)
-mypal6 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 70)
+mypal11 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 40)
+mypal10 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 70)
 mypal7 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 7)
 mypal8 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 15)
 
@@ -130,9 +130,10 @@ df.words <- tweet_words %>%
 
 dfSentWords <- data.frame(df.words) %>% head(15)
 plotWords <- dfSentWords %>%
-  ggplot(aes(y = reorder(word, -n), x = n, fill = n)) +
+  ggplot(aes(y = reorder(word, -n), x = n, fill = as.factor(n))) +
   geom_histogram(stat = "identity", color = "black", cex = 0.25) +
   xlab(NULL) + ylab(NULL) +
+  scale_fill_manual(values = mypal8) +
   theme_ipsum_rc(base_size = 9, plot_margin = margin(20, 8, 20, 8), 
                  plot_title_size = 10) + 
   theme(legend.position = "none")
@@ -150,7 +151,7 @@ data <- cbind(top40, packing)
 dat.gg <- circleLayoutVertices(packing, npoints=40)
 
 plot.circle <- ggplot() + geom_polygon(data = dat.gg, aes(x, y, group = id, fill = as.factor(id)), colour = "black", alpha = 0.6) +
-  scale_fill_manual(values = mypal5) +
+  scale_fill_manual(values = mypal11) +
   geom_text(data = data, aes(x, y, size=n, label = word), color="black") +
   theme_void() + 
   theme(legend.position="none", plot.margin = ggplot2::margin(0,0,0,0)) + 
@@ -167,7 +168,7 @@ plot.lolli <- data.frame(df.words) %>% dplyr::filter(word != "flight") %>%
                  color = "lightgray", size = 1.25) +
   geom_point(size = 3.75, pch = 21) +
   geom_text(mapping = aes(label = n), color = "white", size = 1.5) +
-  scale_color_manual(values = mypal6) + scale_fill_manual(values = mypal6) +
+  scale_color_manual(values = mypal10) + scale_fill_manual(values = mypal10) +
   xlab(NULL) + ylab(NULL) + theme_ipsum_rc() +
   theme_pubclean(base_size = 8, base_family = "Roboto Condensed", flip = FALSE) +
   coord_flip(expand = FALSE, clip = "on", ylim = c(-1, 750), xlim = c(0,39)) +
@@ -178,23 +179,27 @@ plot.lolli <- data.frame(df.words) %>% dplyr::filter(word != "flight") %>%
 plot.lolli2 <- data.frame(df.words) %>% dplyr::filter(word != "flight") %>%
   dplyr::filter(word != "tesla") %>% dplyr::filter(word != "lot") %>%
   dplyr::filter(word != "hard") %>% dplyr::filter(word != "test") %>%
-  dplyr::filter(word != "cars") %>% dplyr::filter(word != "production") %>%
-  head(38) %>%
+  dplyr::filter(word != "cars") %>% #dplyr::filter(word != "production") %>%
+  dplyr::filter(word != "pretty") %>% dplyr::filter(word != "real") %>%
+  dplyr::filter(word != "engine") %>%  
+  head(39) %>%
   ggplot(mapping = aes(x = reorder(word, -n), y = n, fill = reorder(word, -n), color = reorder(word, -n))) +
   geom_linerange(mapping = aes(x = word, ymin = 0, ymax = n),
                  color = "lightgray", size = 1.45) +
-  geom_point(size = 5.5, pch = 21) +
-  geom_text(mapping = aes(label = n), color = "white", size = 2) +
-  scale_color_manual(values = mypal6) + scale_fill_manual(values = mypal6) +
+  geom_point(size = 5.5, pch = 21, alpha=0.9, stroke =0.5, alpha = 0.85) +
+  geom_text(mapping = aes(label = n), color = "white", size = 2.3, fontface="bold") +
+  scale_color_manual(values = mypal10) + scale_fill_manual(values = mypal10) +
   xlab(NULL) + ylab(NULL) + theme_ipsum_rc() +
   theme_pubclean(base_size = 8, base_family = "Roboto Condensed", flip = FALSE) +
-  coord_trans(expand = FALSE, clip = "on", ylim = c(0, 750), xlim = c(0,39)) +
+  coord_trans(expand = FALSE, clip = "on", ylim = c(30, 720), xlim = c(0,40)) +
   theme(legend.position = "none", axis.ticks.x = element_line(color = "black"),
-        plot.margin = ggplot2::margin(r = 0, l = 0, t = -2, b= 2),
+        plot.margin = ggplot2::margin(r = 0, l = 0, t = -2.5, b= -1),
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.75, size = 8.5, 
-                                   margin = ggplot2::margin(t = 2.5, b = 0, r = 0, l = 0)),
-        panel.grid.major.y = element_line(color = "gray90", linetype = 1, size = 0.3), 
-        panel.grid.minor.y = element_line(color = "gray90", linetype = 1, size = 0.3), 
+                                   margin = ggplot2::margin(t = 0.5, b = 0, r = 0, l = 0)),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_text(size = 6, margin = ggplot2::margin(t = 0, b = 0, r = -3, l = 0)),
+        panel.grid.major.y = element_line(color = "gray70", linetype = 3, size = 0.3), 
+        panel.grid.minor.y = element_line(color = "gray70", linetype = 3, size = 0.3), 
         axis.line.x  = element_line(color = "gray20", size = 0.45))
 
 
