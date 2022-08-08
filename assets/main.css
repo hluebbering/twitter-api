@@ -443,7 +443,7 @@ code {
     text-shadow: 0.5px 0.5px 1px black;
 }
 
-.roundedlist ol li::before {
+/*.roundedlist ol li::before {
     content: counter(cupcake);
     display: inline-flex;
     width: 20pt;
@@ -462,7 +462,54 @@ code {
     text-shadow: 0 0 2.5px #000000, 1px 1px 1px rgb(0 0 0);
     box-shadow: 0.875px 0.875px 1.8px 0 hsl(0deg 0% 0% / 30%), inset -0.875px -0.875px 1.8px 0 hsl(0deg 0% 0%), inset -0.5px -0.5px 1px 0 hsl(227deg 12% 38%), inset 0.5px 0.5px 1px 0 hsl(227deg 12% 45%);
     background: #252528;
+}*/
+
+.roundedlist ol li::before {
+    content: counter(cupcake);
+    display: inline-flex;
+    width: 14pt;
+    height: 14pt;
+    border-radius: 20px;
+    align-items: center;
+    font-weight: 700;
+    font-family: 'Roboto';
+    font-size: 14px;
+    justify-content: center;
+    margin-left: -22pt;
+    margin-right: 4.5pt;
+    color: hsl(204deg 90% 56%);
+    vertical-align: bottom;
+    margin-top: 3px;
+    text-shadow: 0 0 2.5px #000000, 1px 1px 1px rgb(0 0 0);
+    box-shadow: 0.875px 0.875px 1.8px 0 hsl(0deg 0% 0% / 30%), inset -0.875px -0.875px 1.8px 0 hsl(0deg 0% 0%), inset -0.5px -0.5px 1px 0 hsl(227deg 12% 38%), inset 0.5px 0.5px 1px 0 hsl(227deg 12% 45%);
+    background: #252528;
+    z-index: 1 !important;
+    position: absolute;
+    /* box-shadow: 0.5px 0.5px 1px 0.5px hsl(0deg 0% 5%); */
 }
+
+.roundedlist ol li::after {
+    display: inline-flex;
+    content: "";
+    width: 20pt;
+    height: 20pt;
+    border-radius: 50px;
+    align-items: center;
+    margin-left: -34.25pt !important;
+    margin-right: 4.5pt;
+    color: hsl(204deg 90% 56%);
+    vertical-align: bottom;
+    margin-bottom: -3px;
+    margin-top: -2px;
+    text-shadow: 0 0 2.5px #000000, 1px 1px 1px rgb(0 0 0);
+    box-shadow: inset 0.5px 0.5px 0.5px 0.05px #0c0c0c, 0px 0px 1.5px 1.5px #0c0c0c;
+    background: conic-gradient(#0260C4, #0069D8, #006EF2, #006BEC, #0055A8, #00408A, #004287, #0059BA, #0058B9, #0162CB, #007AF7, #0065D2, #0358B3, #0051A6, #004C98, #0759BC, #0260C4);
+    z-index: -1 !important;
+    position: unset;
+}
+
+
+
 
 .roundedlist code {
     box-shadow: -2px -2px 5px #212121, 2px 2px 5px #141414;
@@ -633,5 +680,60 @@ span.hljs-rkeyword {
     color: hsl(248deg 91% 75%) !important;
     font-weight: 400;
 }
+
+
+
+td.mystyle {
+    width: 25% !important;
+    padding: 14pt 4pt 14pt 4pt;
+    text-align: center;
+    font-size: 10pt;
+    color: hsl(0deg 0% 100% / 80%);
+    font-family: 'Lato';
+}
+
+td.mystyle::before {
+  content: "";
+    display: flex;
+    width: 44pt;
+    height: 30pt;
+    border-radius: 10pt !important;
+    margin-left: 28pt !important;
+    margin-top: -8pt !important;
+    text-shadow: 0 0 2.5px #000000, 1px 1px 1px rgb(0 0 0);
+    box-shadow: 0.875px 0.875px 1.8px 0 hsl(0deg 0% 0% / 30%), inset -0.875px -0.875px 1.8px 0 hsl(0deg 0% 0%), inset -0.5px -0.5px 1px 0 hsl(227deg 12% 38%), inset 0.5px 0.5px 1px 0 hsl(227deg 12% 45%);
+    background: #252528;
+    z-index: -1 !important;
+    position: absolute;
+}
+
+td.mystyle::after {
+  content: "";
+    display: flex;
+    width: 56pt;
+    height: 42pt;
+    border-radius: 16pt !important;
+    margin-left: 22pt !important;
+    margin-top: -28pt !important;
+    box-shadow: 0.875px 0.875px 1.8px 0 rgb(0 0 0 / 30%), -0.75px -0.75px 1.5px 0 hsl(216deg 16% 94%), inset -0.5px -0.5px 1px 0 rgb(0 0 0 / 30%), inset 0.5px 0.5px 1px 0 hsl(220deg 23% 95%);
+    background: conic-gradient(#0260C4, #0069D8, #006EF2, #006BEC, #0055A8, #00408A, #004287, #0059BA, #0058B9, #0162CB, #007AF7, #0065D2, #0358B3, #0051A6, #004C98, #0759BC, #0260C4);
+    z-index: -2 !important;
+    position: absolute;
+}
+
+
+td.mystyle2 {
+  width: 25% !important;
+  padding: 4pt;
+  text-align: center;
+  font-size: 10pt; 
+  letter-spacing: 2px; 
+  text-transform: uppercase; 
+  color: rgba(0, 0, 0, 0.6); 
+  font-family: 'Lato' !important;
+}
+
+
+
 
 

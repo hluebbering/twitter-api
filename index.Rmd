@@ -41,6 +41,7 @@ library(patchwork)
 library(ggpubr)
 library(pagedown)
 library(packcircles)
+library(magick)
 source("scripts/data.R")
 source("scripts/sentiment.R")
 ```
@@ -52,11 +53,28 @@ source("scripts/sentiment.R")
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 
 
-<div class = "datasource2">
-<span class="myhighlight">Goal:</span> Load Twitter API into a data management system and write queries to retrieve data.
+<span class="myhighlight">Overview:</span> The goal of the following project is to programmatically retrieve and analyze all of Elon Musk's tweets from the Twitter API. We compile over 10,000 of Musk's tweets into a comprehensive dataset and perform sentiment analysis for each tweet object.
 
-- Dataset of Elon Musk’s most recent Tweets during 2015-2022, stored in csv format, where each tweet is in its own separate row object.
-</div>
+
+
+
+
+
+
+
+
+```{r, out.width="90%"}
+htmltools::includeHTML("assets/kable_out.html")
+```
+
+
+
+
+
+
+
+
+
 
 
 ```{r}
@@ -71,30 +89,41 @@ userDF %>% dplyr::select(-description, -name, -favourites_count) %>%
 
 
 
+
+
 ## Introduction
 
-<div class = "datasource22">
-
-`Apache Spark` is an open-source engine for large-scale parallel data processing known for its speed, ease of use, and cutting-edge analytics. It provides high-level APIs in general-purpose programming languages such as Scala, Python, and R, as well as an optimization engine supporting standard data analysis methods. 
 
 
-`Azure Databricks` is an analytics platform based on Microsoft Azure cloud services, enabling the latest versions of Apache Spark and open source libraries. Built with Spark capabilities, Databricks provides a cloud-based interactive workspace with fully managed Spark clusters. This allows users to work in a single, easy-to-use environment, create and configure clusters in seconds, and quickly execute Spark code.
+Elon Musk, the man who transformed the electric car industry and accelerated the world's space exploration efforts, provides the public an unfiltered look into his eccentric mind through his online Twitter presence. With over 77 million followers, Musk has one of the most followed Twitter accounts receiving thousands of shares, likes, and comments on each of his tweets. Musk often shares tweets daily, covering a wide range of topics from serious technical aspects to lighthearted memes. Some of his tweets have a big impact, making headlines, stirring up controversy, and even sometimes moving the needle on everything from Tesla’s stock price to cryptocurrency markets. The companies that Musk runs are also hugely influential and disruptive. 
 
 
+To gain a better understanding of Musk’s Twitter profile, we programmatically retrieve and analyze all of Elon Musk's tweets using the `rtweet` package, which provides a convenient interface between the Twitter API and R code. We compile over 10,000 of his tweets into a comprehensive dataset. Once we scraped a decade worth of Elon Musk tweets, we analyzed the data and sorted the information to answer the following questions.
 
+
+<div class = "datasource2">
+1. `(tweet types)` What is the ratio of mentions, replies, retweets, quotes, and organic tweets?
+2. `(user engagement)` How does Elon Musk engage with other twitter users?
+3. `(twitter activity)` Are there any trends of when Musk tweets?
+4. `(topics)` What are Elon Musk’s most tweeted topics?
 </div>
 
 
 
+The first question examines Musk's tweet distribution, which we answer by sorting all tweets into categories (based on tweet types) and ranking each category based on the volume of tweets. Analyzing Musk's nature of engagement, we answer the second question by unpacking tweets containing conversations with and directed to other users. To answer the third question analyzing Musk's Twitter activity, we sort Musk's feed into different timeframes during which the tweets were posted. Lastly showing which topics dominated his feed each year, we answer the fourth question by analyzing which hashtags and words Musk uses the most in his tweets.
 
-### Data Description
 
 
-<div class = "roundedlist22">
 
-<span class="myhighlight">Twitter (Elon Musk 2015-2022):</span> Dataset of Elon Musk’s most recent Tweets during 2015-2022, stored in RDS format, where each tweet is in its own separate row object. All Tweets are collected, parsed, and plotted using <code>rtweet</code> in R. In total, there are more than thousands of tweets in this dataset, including retweets and replies. All objects are to go into a single database.
 
-</div>
+------------------------------------
+
+
+
+## Data Description
+
+
+Using the Twitter API, we compile over 10,000 of Musk's tweets into a comprehensive dataset. The dataset consists of Elon Musk’s most recent Tweets during 2015-2022, stored in RDS format, where each tweet is in its own separate row object.  All Tweets are collected, parsed, and plotted using <code>rtweet</code> in R. In total, there are more than thousands of tweets in this dataset, including retweets and replies. All objects are to go into a single database.
 
 
 
@@ -108,34 +137,31 @@ kable(dfvar, escape = FALSE, col.names = NULL) %>% kable_styling(font_size = 12,
 
 
 
-#### Twitter API
 
 
 
-After setting up the Twitter application and loading the `rtweet` package in R, we use the following command to create a token with application authentication, allowing access to Twitter data. 
+### Twitter API
+
+
+
+To obtain the data of a Twitter account, we must first sign up for a developer account and create an application that has the necessary credentials required to access the Twitter API. After setting up the Twitter application, we want to load the rtweet package in R and set the application authentication keys generated in the portal. Next, we use the following command to create and authenticate a Twitter token, allowing access to Twitter data. 
 
 
 
 ```{r, echo=TRUE, eval=FALSE}
 library(rtweet) # load rtweet package
-twitter_token <- create_token(
-  app = "mytwitterapp",
-  consumer_key = "api_key", consumer_secret = "api_secret",
-  access_token = "access_token", access_secret = "access_secret")
+twitter_token <- create_token(app = "twitter_app", consumer_key = "api_key", consumer_secret = "api_secret", access_token = "access_token", access_secret = "access_secret")
 use_oauth_token(twitter_token) # authenticate via web browser
 ```
 
 
-Now, we search Twitter's full archive API, running the `search_fullarchive` command for access to user historical tweets. The example below captures Elon Musk's tweets from January 01, 2010, to May 28, 2022.
+Searching Twitter's full archive API with the rtweet package, we run the `search_fullarchive()` function to access and extract the complete information from all of the historical tweets related to a particular user. It's possible to then save these extracted tweets to an RDS file. The example code below captures Elon Musk's tweets from January 01, 2010, to May 28, 2022.
+
 
 
 ```{r, echo=TRUE, eval=FALSE}
 df <- search_fullarchive(q = "from:elonmusk", n = 10000, env_name = enviroment_name, fromDate = "201001010000", toDate = "202205280000")
 ```
-
-
-
-
 
 
 ```{r}
@@ -154,49 +180,25 @@ kable(tweetDF2, escape = F) %>%
 
 
 
-### Questions of Interest
-
-
-<div class = "datasource2">
-
-1. `(path finding)` Display the thread (replies) of tweets (the tweet, time, id, in reply to id, user name with their screen name) posted by Elon Musk with screen_name in the order in which they were posted.
-2. `(location)` From which location have the tweets been most actively posted (most number of tweets)?
-3. `(hashtags)` Which hashtags does Musk use the most, and how many tweets are associated with these hashtags?
-4. `(topics)` What word does Musk mention the most in his tweets? What company products does Musk mention the most in his tweets? Products include Falcon 9, Starlink Satellites, Model 3 cars, etc. 
-5. `(trending)` Are there any trends of what Musk tweets about the company?
-6. `(nature of engagement)` What is the percentage of different types of tweets (simple tweet, reply, retweet, quoted tweet) to their overall number of tweets?
-
-
-
-</div>
-
-
-
-------------------------------------
-
-
-### Storing Data in Databricks
-
-
-<span class="myhighlight">Building a Databricks workspace using an Apache Spark cluster. </span>
-
-First, we create a Databricks workspace from the Azure portal and then launch the workspace, which redirects us to the interactive Databricks portal. We create a Spark cluster from the Databricks interactive workspace and configure a notebook on the cluster. In the notebook, we can use either **PySpark** or **SparkR** to read data from a dataset into a Spark DataFrame. Using the Spark DataFrame, we can run a Spark SQL job to query the data.
 
 
 
 
-<span class="myhighlight2">R Code: </span>
 
-```{r, eval=FALSE, echo=TRUE}
-require(SparkR)
-df <- read.df("dbfs:/FileStore/dfclean.csv", source = "csv", 
-              header = "true", inferSchema = "true")
+#### Storing Data in Databricks
+
+
+Optionally, we can load the Twitter API data into a data management system, such as Azure Databricks, and write queries to run a SQL job and retrieve the data.
+
+
+`Azure Databricks` is an analytics platform based on Microsoft Azure cloud services, enabling the latest versions of Apache Spark: an open-source engine providing large-scale APIs in general-purpose programming languages such as Scala, Python, and R. Specifically, Databricks provides a cloud-based interactive workspace with fully managed Spark clusters, allowing users to quickly execute Spark code in a easy-to-use environment. From the Azure portal, we create and launch a Databricks workspace, establish a Spark cluster, and configure a notebook on the cluster. In the notebook, we use **SparkR** to read the dataset into a Spark DataFrame and run a SQL job to query the data.
+
+
+
+```{r, eval=FALSE, echo=FALSE}
 createOrReplaceTempView(df, "twitterTemp") # register table for SQL
 ```
 
-
-
-The Azure Databricks system stores this data file in FileStore, located in the *FileStore/* folder, which we then use the above SparkR command to read in the data as a dataframe.
 
 
 
@@ -211,15 +213,102 @@ The Azure Databricks system stores this data file in FileStore, located in the *
 
 
 
-Users can perform relational procedures on DataFrames using a domain-specific language (DSL) similar to R dataframes and Python Pandas. DataFrames support standard relational operators, including projection (`select`), filter (`where`), `join`, and aggregations (`group by`).
+When dealing with Twitter data, one of the first steps is to distinguish organic (original, user-written) tweets from other tweet types: retweets, replies, mentions, and quotes. Analyzing the ratio of mentions, replies, retweets, quotes, and organic tweets provides a general overview of the user account type. 
+
+```{r}
+#x <- rtweet::network_data(gfg_data)
+```
 
 
+### Query 1. Tweet Types
 
-
-### Query 1. Mentions
 
 <div class = "datasource2">
-- Track Elon Musk's engagement with other twitter users and display the corresponding thread of tweets posted by Musk (tweet content, date posted, users in tweet).
+- What is the ratio of tweet types: mentions, replies, retweets, quotes, and organic tweets?
+</div>
+
+
+The different type of tweets that exist are **general tweets**, **mentions**, **replies**, **retweets**, and **quotes**. General tweets are original twitter posts containing text, photos, a GIF, and/or video, but do **not** include any mentions, replies, retweets, or quotes. Both mentions and replies are types of tweet containing other account usernames; though, replies are sent in direct response to another user's tweet.  Lastly, retweets and quotes are both re-postings of another person's tweet, although quotes allow users to post another person's tweet with their own added comment.
+
+
+
+As a first step, we distinguish between organic tweets, retweets and replies. For this, we identify the tweet type from the data collected by the Twitter API contained in certain columns, including "is_retweet", "reply_to_status_id", and others. The following shows how to remove the retweets and replies from the data to keep only the organic/general tweets.
+
+
+
+```{r, echo=TRUE, eval=FALSE}
+# Remove retweets and replies
+dfGeneral <- df[df$is_retweet == FALSE,] %>% subset(is.na(reply_to_status_id))
+```
+
+
+Similarly, we want to create a different dataset for each data type.
+
+```{r, echo=TRUE, eval=FALSE}
+dfMention <- subset(df, !is.na(df$mentions_user_id))
+dfReply <- subset(df, !is.na(df$reply_to_status_id))
+dfRtweet <- df[df$is_retweet == TRUE,]
+dfQuote <- df[df$is_quote == TRUE,]
+```
+
+
+In the above, we subset the tweets into five datasets either containing only general tweets, mentions, replies, retweets, or quotes. We then count the number of observations for each dataset using the `nrow()` function and store the information in a separate dataframe containing the tweet type and its respective count.
+
+
+
+
+
+```{r,  warning=FALSE, message=FALSE, out.width="95%"}
+plotTypes <- lolli.types + labs(title = "Types of Tweets Count", subtitle = "Elon Musk's Tweets (2017-2022)") + theme(text = element_text(family = "Roboto Condensed"), plot.title = element_text(size = 14, colour = "gray5", face = "bold"), plot.subtitle = element_text(size = 12, colour = "gray20"))
+
+ragg::agg_png(filename = "assets/static/tweetTypes.png", width = 7487, height = 4205, units = "px", res = 900)
+plotTypes
+invisible(dev.off())
+knitr::include_graphics("assets/static/tweetTypes.png")
+```
+
+
+
+Now, for example, we can show information for each of Musk's retweets and query the data to obtain his most frequently retweeted users. To identify the most frequently retweeted users, we use tidyr tools to unnest, count, and sort each user from Musk's retweets.
+
+
+
+
+
+```{r}
+# dfRetweet %>% group_by(retweet_screen_name) %>% tally(sort = TRUE)
+
+topRetweets <- plotRetweet +
+  plot_annotation(
+  title = "Top 12 Most Retweeted Users",
+  subtitle = "Elon Musk's Tweets (2017-2022)",
+  caption = "Source: twitter api dataset")
+
+topRetweets <- topRetweets + plot_annotation(
+  theme = theme(text = element_text(family = "Roboto Condensed"),
+    plot.title = element_text(size = 13.25, colour = "gray5", face = "bold"), 
+    plot.subtitle = element_text(size = 12, colour = "gray20"), 
+    plot.caption = element_text(size = 8, face = "italic", colour = "gray40")))  
+
+
+# ragg::agg_png(filename = "assets/static/topRetweets.png", width = 8887, height = 5895, units = "px", res = 1050)
+# topRetweets
+# invisible(dev.off())
+# knitr::include_graphics("assets/static/topRetweets.png")
+
+```
+
+
+
+
+-------------------------------
+
+
+
+### Query 2. Mentions
+
+<div class = "datasource2">
+- How does Elon Musk engage with other twitter users?
 </div>
 
 
@@ -228,24 +317,11 @@ To track Elon Musk's engagement with people on Twitter, we want to look into twe
 
 
 
-<span class="myhighlight2">R Code: </span>
-
-```{r, echo=TRUE, eval=FALSE}
-dfMentions <- SparkR::select(df, "created_at", "mentions_user_id",
-                     "mentions_screen_name", "text")
-dfMentions <- SparkR::filter(dfMentions, dfMentions$mentions_user_id != NA)
-createOrReplaceTempView(dfMentions, "dfMentions")
-```
-
-
-
-
-
 
 ```{r}
-dfMentions <- subset(gfg_data, !is.na(gfg_data$mentions_user_id)) %>% dplyr::select(created_at, mentions_user_id, mentions_screen_name, text)
+dfMentions_02 <- subset(gfg_data, !is.na(gfg_data$mentions_user_id)) %>% dplyr::select(created_at, mentions_user_id, mentions_screen_name, text)
 
-tail(dfMentions, 50)[c(7, 10, 29, 48),] %>% 
+tail(dfMentions_02, 50)[c(7, 29, 48),] %>% 
   kable(escape = FALSE) %>% 
   kable_styling(full_width = F, html_font = "Roboto Condensed", font_size = 10, bootstrap_options = c("hover", "striped")) %>%
   add_header_above(c("Mentions" = 4), extra_css = c("font-weight: 400; letter-spacing: 0.25px; text-transform: uppercase; color: #1d9bf0; font-size: 9pt; text-shadow: 0.15px 0.15px 0.001px #12121240, -0.25px -0.25px 0.2px #d1d6e0f2, 0.25px 0.25px 0.25px #00000080, -0.2px -0.2px 0.1px #1a1a1a40, -0.5px -0.5px 0.2px #e6e6e680, 0.5px 0.5px 0.5px #b3b3b380; text-align: left;"))
@@ -258,10 +334,8 @@ As shown above, there exist tweets containing multiple mentioned *usernames* wit
 
 
 ```{r, echo=TRUE, eval=FALSE}
-dfMentions %>%
-  tibble(user = str_extract_all(text, "@\\w+")) %>%
-  tidyr::unnest_longer(user) %>%
-  dplyr::count(user, sort = TRUE)
+dfMentions %>% tibble(user = str_extract_all(text, "@\\w+")) %>%
+  tidyr::unnest_longer(user) %>% dplyr::count(user, sort = TRUE)
 ```
 
 
@@ -269,16 +343,49 @@ dfMentions %>%
 The above command uses the `str_extract_all()` function to extract the mentioned users for each tweet and `unnest_longer()` to transform the nested lists into tidy rows so that each row contains only one user. Lastly, we count the total number of observations for each unique user.
 
 
-<span class="myhighlight2">SQL Query: </span>
+
 
 ```sql
 SELECT mentions_screen_name, COUNT(*) AS n
-FROM mentionDF
+FROM dfMentions
 WHERE mentions_screen_name != 'NA'
 GROUP BY mentions_screen_name
 SORT BY n DESC;
 ```
 
+
+
+
+```{r}
+dfMentions <- dfMentions %>% head(10)
+
+timeMent <- c()
+
+for (user in dfMentions$screen_name) {
+  data <- dplyr::filter(
+    gfg_data, grepl(tolower(user), tolower(mentions_screen_name))) %>%
+    dplyr::select(created_at)
+  
+  timeMent <- c(timeMent, c(data))
+  
+}
+
+dfMentions <- dfMentions %>%
+  dplyr::mutate(mention_time = (timeMent),
+                mention_time2 = (timeMent))
+
+
+
+dfMentions %>%
+  gt::gt() %>% 
+  gtExtras::gt_color_rows(columns = n, palette = "ggsci::blue_material") %>%
+  gtExtras::gt_plt_dist(column =  mention_time, type = "density", line_color = "black", fill_color = "gray80", fig_dim = c(5,32)) %>%
+  gtExtras::gt_plt_dist(column =  mention_time2, type = "rug_strip", line_color = "black", fill_color = "blue", fig_dim = c(5,30)) %>%
+  gtExtras::gt_theme_espn()
+
+
+
+```
 
 
 ```{r, fig.show='hold', out.width="100%"}
@@ -295,16 +402,15 @@ topMentions <- topMentions + plot_annotation(
   plot_layout(widths = c(2, 1))
 
 
-ragg::agg_png(filename = "assets/static/userMentions.png", width = 8887, height = 5495, units = "px", res = 1000)
-topMentions
-invisible(dev.off())
-knitr::include_graphics("assets/static/userMentions.png")
+# ragg::agg_png(filename = "assets/static/userMentions.png", width = 8887, height = 5495, units = "px", res = 1000)
+# topMentions
+# invisible(dev.off())
+# knitr::include_graphics("assets/static/userMentions.png")
 ```
 
 
 
-
-SpaceX and Tesla are the most frequently mentioned users in Musk's tweets. Linking conversations together, a **reply** is a type of tweet sent in direct response to another user's tweet. Similar to mentions, replies allow users to direct tweets toward other twitter users and interact in conversations. Following the same general procedure above, we obtain the following results.
+Linking conversations together, a **reply** is a type of tweet sent in direct response to another user's tweet. Similar to mentions, replies allow users to direct tweets toward other twitter users and interact in conversations. Following the same general procedure above, we obtain the following results.
 
 
 ```{r, out.width="100%"}
@@ -336,174 +442,28 @@ knitr::include_graphics("assets/static/topReplies.png")
 
 
 
-### Query 2. Types
 
-
-<div class = "datasource2">
-- What is the percentage of different types of tweets (simple tweet, reply, retweet, quoted tweet) to their overall number of tweets?
-</div>
-
-The different type of tweets that exist are **general tweets**, **mentions**, **replies**, **retweets**, and **quotes**. The mention and reply tweet types are already defined in the previous section. General tweets are original twitter posts containing text, photos, a GIF, and/or video, but do **not** include any mentions, replies, retweets, or quotes. Lastly, retweets and quotes are both re-postings of another person's tweet, although quotes allow users to post another person's tweet with their own added comment.
-
-
-<span class="myhighlight2">R Code: </span>
-
-
-```{r, echo=TRUE, eval=FALSE}
-nGeneral <- nrow(df[df$is_retweet == FALSE, ] %>% # removes retweets
-                   subset(is.na(reply_to_status_id))) # removes replies
-nMentions <- nrow(subset(df, !is.na(df$mentions_user_id)))
-nReplies <- nrow(subset(df, !is.na(df$reply_to_status_id)))
-nRetweets <- nrow(nRetweets <- df[df$is_retweet == TRUE, ])
-nQuotes <- nrow(df[df$is_quote == TRUE, ])
-
-tweetTypes <- data.frame(
-  type = c("General", "Mentions", "Replies", "Retweets", "Quotes"),
-  count = c(nGeneral, nMentions, nReplies, nRetweets, nQuotes))
-```
-
-
-In the above, we create five different data sets either containing only general tweets, mentions, replies, retweets, or quotes. We then count the number of observations for each data set and store it in a separate data frame containing the tweet type and its respective count.
-
-
-
-```{r,  warning=FALSE, message=FALSE, out.width="95%"}
-plotTypes <- lolli.types + 
-  labs(title = "Types of Tweets Count", subtitle = "Elon Musk's Tweets (2017-2022)") + 
-  theme(text = element_text(family = "Roboto Condensed"),
-        plot.title = element_text(size = 14, colour = "gray5", face = "bold"), 
-        plot.subtitle = element_text(size = 12, colour = "gray20"))
-
-
-ragg::agg_png(filename = "assets/static/tweetTypes.png", width = 7487, height = 4205, units = "px", res = 900)
-plotTypes
-invisible(dev.off())
-knitr::include_graphics("assets/static/tweetTypes.png")
-```
-
-
-
-Now, let's display a table holding information for each of Elon Musk's retweets and query the data to obtain the usernames of Musk's most frequently retweeted users. To identify the most frequently retweeted users, we use tidyr tools to unnest, count, and sort each user from Musk's retweets.
-
-
-
-
-```{r, echo=TRUE, eval=FALSE}
-dfRetweet <- df %>% dplyr::filter(is_retweet == TRUE) %>%
-  dplyr::select(
-    retweet_created_at, retweet_text, retweet_user_id,
-    retweet_screen_name, retweet_favorite_count,
-    retweet_retweet_count, retweet_location) %>%
-  dplyr::arrange(desc(retweet_created_at))
-
-dfRetweet %>% group_by(retweet_screen_name) %>%
-  tally(sort = TRUE)
-```
-
-
-```{r}
-retweetKable <- gfg_data %>% 
-  dplyr::filter(is_retweet == TRUE) %>%
-  dplyr::select(retweet_status_id,retweet_created_at, retweet_text, retweet_user_id, retweet_screen_name, retweet_favorite_count, retweet_retweet_count, retweet_location) %>%
-  dplyr::filter(retweet_status_id == "x1519461793604661248" |
-                  retweet_status_id == "x715632500303761408" |
-                  retweet_status_id == "x805661402937565184" |
-                  retweet_status_id == "x1261074546561433601") %>%
-  dplyr::select(-retweet_status_id) %>%
-  dplyr::arrange(desc(retweet_created_at)) %>% 
-  kable(col.names = c("created_at", "text", "user_id", "screen_name", "favorite_count", "retweet_count", "location"), escape = F) %>%
-  kable_styling(full_width = F, html_font = "Roboto Condensed", font_size = 10, bootstrap_options = c("hover", "striped")) %>%
-  add_header_above(c("retweets" = 7), align = "l", extra_css = c("font-weight: 400; letter-spacing: 0.25px; text-transform: uppercase; color: #1d9bf0; font-size: 9pt; text-shadow: 0.15px 0.15px 0.001px #12121240, -0.25px -0.25px 0.2px #d1d6e0f2, 0.25px 0.25px 0.25px #00000080, -0.2px -0.2px 0.1px #1a1a1a40, -0.5px -0.5px 0.2px #e6e6e680, 0.5px 0.5px 0.5px #b3b3b380;")) %>%
-  scroll_box(width = "100%", extra_css = "overflow-x: overlay !important; border: none !important; margin: 12pt 0px 12pt 0;")
-
-
-retweetKable
-```
-
-
-
-
-
-
-```{r}
-topRetweets <- plotRetweet + #tableRetweet + 
-  plot_annotation(
-  title = "Top 12 Most Retweeted Users",
-  subtitle = "Elon Musk's Tweets (2017-2022)",
-  caption = "Source: twitter api dataset")
-
-topRetweets <- topRetweets + plot_annotation(
-  theme = theme(text = element_text(family = "Roboto Condensed"),
-    plot.title = element_text(size = 13.25, colour = "gray5", face = "bold"), 
-    plot.subtitle = element_text(size = 12, colour = "gray20"), 
-    plot.caption = element_text(size = 8, face = "italic", colour = "gray40")))  
-
-
-# ragg::agg_png(filename = "assets/static/topRetweets.png", width = 8887, height = 5895, units = "px", res = 1050)
-# topRetweets
-# invisible(dev.off())
-# knitr::include_graphics("assets/static/topRetweets.png")
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r}
-#user <- c("SpaceX", "Tesla", "NASA", "cleantechnica", "ElectrekCo", "OpenAI", "InsideEVs", "Hyperloop", "boringcompany")
-#u <- lookup_users(user)
-
-```
-
-
-
-  
-
-
-
-
--------------------------------
-
-
-### Query 3. Trends
+### Query 3. Twitter Activity
 
 <div class = "datasource2">
 - Are there any trends of when Elon Musk tweets?
 </div>
 
 
-#### Datetime Datatype
+Here, we provide an overall overview of the activity of the account by examining when Musk posts his tweets. This includes analyzing the frequency of tweets by timeframes including year, month, weekday, hour, and more. Parsing the information from the `created_at` column, we extract the timestamp to display the year, month, day, and hour associated with the publish date for each tweet.
 
 
-The following parses the `created_at` datetime column to display the year, month, day, and hour for each tweet.
+
 
 
 
 ```{r, echo=TRUE, eval=FALSE}
-dfTime <- select(df, c("status_id", "created_at"))
-dfTime$created_at <- to_timestamp(dfTime$created_at)
-dfTime$year <- year(dfTime$created_at)
-dfTime$month <- date_format(to_date(dfTime$created_at), "MMMM")
-dfTime$weekday <- date_format(to_date(dfTime$created_at), "EEEE")
-
-createOrReplaceTempView(dfTime, "dfTime")
+df$created_at <- to_timestamp(df$created_at)
+df$year <- year(df$created_at)
+df$month <- date_format(to_date(df$created_at), "MMMM")
+df$weekday <- date_format(to_date(df$created_at), "EEEE")
 ```
 
-
-The resulting schema for the above dataframe consists of a string, datetime, integer, string, and string for the status_id, created_at, year, month, weekday columns, respectively. 
 
 
 ```{r}
@@ -516,17 +476,8 @@ dfTime %>% dplyr::select(-status_id) %>% slice_sample(n = 10) %>%
 ```
 
 
-<span class="myhighlight2">SQL Query: </span>
 
-```sql
-SELECT weekday AS created_weekday, COUNT(*) AS n
-FROM dfTime
-GROUP BY created_weekday
-ORDER BY n DESC;
-```
-
-
-
+The above data allows us to explore Musk's Twitter activity, ranging from the frequency of his tweets over years to exactly which days of the week or hours of the day have more or less activity. As a result, we see that Musk is the most active on Thursdays and Fridays, mostly tweeting at night.
 
 
 
@@ -553,6 +504,24 @@ knitr::include_graphics("assets/static/reportDate.png")
 
 
 
+We can go deeper and look at exactly the time and day of the week in which Musk has the most activity posting tweets with a detailed histogram. Consistent with what was previously obtained, we see that there is greater activity on Thursdays at 6 pm.
+
+
+```{r}
+colpal3 <- c("#E1B1FB","#9F00F5", "#340069","#0B0042", "#12167D", "#1e40eb","#2b80f2", "#35AEF6", "#3fdbf9","#82FAF5","#C4FEFA", "#EBFFFD")
+```
+
+
+
+```{r, fig.show='hold', out.width="100%"}
+# TWEETS PER DAY AND HOUR
+x <- dfTime %>% mutate(hr = hms::hms(hours= hour(created_at), minutes = minute(created_at))) %>% 
+  ggplot(mapping = aes(x = weekday, y = hr)) + 
+  geom_bin2d(bins = 24, cex = 0.185, color = "#e0e2e680") + 
+  scale_fill_gradientn(colours = rev(colpal3), values = c(0,1.25)) + theme_ipsum_rc(base_size = 10) + ggtitle("Tweets per day of the week and hour") + xlab("weekday") + ylab("hour") + theme(legend.title = element_blank(), plot.title = element_text(size = 10), panel.grid.minor.y = element_blank(), axis.text.y = element_text(size = 8, colour = "#3c4043"), axis.text.x = element_text(size = 8.5, colour = "#3c4043"), legend.text = element_text(size = 7, colour = "#3c4044bf"))
+
+ggplotly(x)
+```
 
 
 
@@ -563,35 +532,41 @@ knitr::include_graphics("assets/static/reportDate.png")
 
 
 
-### Query 4. Hashtags
+### Query 4. Tweet Topics
+
 
 <div class = "datasource2">
-- Which hashtags does Musk use the most, and how many tweets are associated with these hashtags?
+- What are Elon Musk’s most tweeted topics?
 </div>
 
 
 
-Here we extract hashtags, all words preceded with a `#` character, from the content of the Tweets data. The following command unpacks the `hashtags` column into an array of strings, followed by counting how many unique hashtags used by Elon Musk.
+
+Continuing to analyze Musk's habits on Twitter, we want to know which topics dominate Musk's Twitter feed. To get the topics and themes of his content, we examine the most frequent hashtags and words used in his tweets and how many tweets are associated with these hashtags and words. 
 
 
 
-<span class="myhighlight2">SQL Query: </span>
+<span class="myhighlight2">Most Used Hashtags: </span>
 
-```sql
-SELECT hashtags, COUNT(*) AS hashtagcount
-FROM twitterTemp 
-WHERE hashtags != 'NA'
-GROUP BY hashtags
-SORT BY hashtagcount DESC;
+
+First we extract hashtags, all words preceded with a `#` character, from the content of the Tweets data. The following command unpacks the `hashtags` column into an array of strings, followed by counting how many unique hashtags used by Elon Musk.
+
+
+
+```{r, echo=TRUE, eval=FALSE}
+hashtag <- df$text %>% str_extract_all("#[A-Za-z0-9_]+")
+hashtag_word <- unlist(hashtag)
+hashtag_word <- tolower(hashtag_word)
+hashtag_word <- gsub("[[:punct:]ー]", "", hashtag_word)
 ```
 
 
 
-```{r}
-#top.hashtags <- function (df, k=20) {
 
-hashtag_pat <- "#[A-Za-z0-9_]+"
-hashtag <- gfg_data$text %>% str_extract_all(hashtag_pat)
+
+
+```{r}
+hashtag <- gfg_data$text %>% str_extract_all("#[A-Za-z0-9_]+")
 hashtag_word <- unlist(hashtag)
 hashtag_word <- tolower(hashtag_word)
 hashtag_word <- gsub("[[:punct:]ー]", "", hashtag_word)
@@ -620,69 +595,54 @@ knitr::include_graphics("assets/static/topHashtag.png")
 
 
 
+<span class="myhighlight2">Most Used Words: </span>
+
+
+Next, we look at which words Musk mentions the most in his tweets. Figuring out the most common words in Elon Musk's tweets involves text mining tasks. The first step is to clean up the text from our dataset by using lowercase and removing punctuation, usernames, links, etc. We then use R tidy tools to convert the text to tidy formats and remove stop words.
 
 
 
 
+```{r}
+organic_tweets <- gfg_data[gfg_data$is_retweet == FALSE,] %>% subset(is.na(reply_to_status_id))
+dfGeneral <- organic_tweets
+# Regex for parsing tweets
+replace_reg <- "https?://[^\\s]+|&amp;|&lt;|&gt;|\bRT\\b|^<"
+```
 
 
-
-
-
-
-
-
-
-
--------------------------------
-
-
-### Query 5. Topic Words
-
-
-<div class = "datasource2">
-- What word does Musk mention the most in his tweets? What company products does Musk mention the most in his tweets?
-</div>
-
-
-Figuring out the most common words in Elon Musk's tweets involves text mining tasks. The first step is to clean up the text from our dataset by using lowercase and removing punctuation, usernames, links, etc. We then use R tidy tools to convert the text to tidy formats and remove stop words.
-
-
-
-<span class="myhighlight2">R Code: </span>
 
 ```{r, echo=TRUE, eval=FALSE}
-library(tidytext)
-library(stringr)
+# Regex for parsing tweets
+replace_reg <- "https?://[^\\s]+|&amp;|&lt;|&gt;|\bRT\\b|^<"
 
-dfWords <- df %>%
-  dplyr::mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
-         text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
-         text = str_remove_all(text, "[^\x01-\x7F]")) %>% 
-  unnest_tokens(word, text, token = "tweets") %>%
-  dplyr::filter(!word %in% stop_words$word,
-        !word %in% str_remove_all(stop_words$word, "'"),
-        str_detect(word, "[a-z]"),
-        !str_detect(word, "^#"),         
-        !str_detect(word, "@\\S+")) %>%
-  dplyr::count(word, sort = TRUE)
+# Clean text
+words <- dfGeneral %>% 
+  dplyr::mutate(
+    text = str_remove_all(text, replace_reg),
+    text = str_remove_all(text, "[[:punct:]]"),
+    text = str_remove_all(text, "[[:digit:]]")) %>%
+  # Split into words
+  unnest_tokens(word, text, token = "tweets") %>% 
+  # Remove stop words
+  anti_join(stop_words, by = "word")
 ```
+
+
+
+
 
 
 In the above command, the pattern matching function `str_remove_all()` removes unwanted text, and the `unnest_tokens()` function splits the text of each tweet into tokens, using a one-word-per-row format. We then use the `str_detect()` function to filter out words by removing stop words, unicode characters, and whitespace.
 
 
 ```{r, out.width="100%"}
-
 top40Words <- ggarrange(plot.lolli, plot.circle, ncol = 2, widths = c(3, 4), heights = c(1, 1))
 
 ragg::agg_png(filename = "assets/static/top40Words.png", width = 9087, height = 5295, units = "px", res = 1600)
 plot.lolli2
 invisible(dev.off())
 knitr::include_graphics("assets/static/top40Words.png")
-
-
-
 
 ```
 
@@ -698,10 +658,36 @@ knitr::include_graphics("assets/static/top15Words.png")
 ```
 
 
+Above, we used the `unnest_tokens` function to tokenize by word; however, we can also use these functions to tokenize into consecutive sequences of words, called n-grams. We do this by adding the option `token = "ngrams"` and setting $n$ to the number of words. Setting n to $2$ allows us to examine pairs of two consecutive words, often called *bigrams*.
 
 
 
+```{r, echo=TRUE, eval=TRUE}
+bigrams <- dfGeneral %>% 
+  dplyr::mutate(text = str_replace_all(text, replace_reg, "")) %>%
+  
+  # split into word pairs
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
+  separate(bigram, into = c("first","second"), sep = " ", remove = FALSE) %>%
+  
+  # remove stop words
+  anti_join(stop_words, by = c("first" = "word")) %>%
+  anti_join(stop_words, by = c("second" = "word")) %>%
+  filter(str_detect(first, "[a-z]") & str_detect(second, "[a-z]"))
+```
 
+
+
+```{r}
+bigram_data <- bigrams %>% 
+  group_by(bigram) %>%
+  dplyr::count() %>%
+  arrange(-n) %>% 
+  head(12)
+
+kable(bigram_data) %>%
+  kable_styling(bootstrap_options = c("condensed"), full_width = T, font_size = 14)
+```
 
 
 
@@ -721,7 +707,6 @@ Here we use the `syuzhet` R package to iterate over a vector of strings consisti
 
 
 
-<span class="myhighlight2">R Code: </span>
 
 ```{r,echo=TRUE}
 round_time <- function(x, secs)
@@ -835,10 +820,17 @@ radarplot <- (myradarChart(radarDF2, colors_border, colors_in, mytitle))
 
 
 
+------------------------------------
 
 
+## Conclusion
 
 
+In this article, I aimed to show how to extract and analyse tweets using the free-to-use programming software R. I hope you found this guide helpful to build your own Twitter Analytics Report that includes:
+
+Showing which tweets worked best and which didn’t
+The ratio of organic tweets/replies/retweets, the time of tweet publication and the platforms from which tweets are published. These are all insights regarding the tweeting behaviour.
+The most frequent words used in the tweets, hashtags, from which accounts most retweets originate and a sentiment analysis capturing the tone of the tweets. These are all insights on the content of the tweets.
 
 
 

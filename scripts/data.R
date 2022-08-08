@@ -108,6 +108,9 @@ df_quote <- gfg_data %>%
 #####################################
 ############ TWEET WORDS ############
 
+organic_tweets <- gfg_data[gfg_data$is_retweet == FALSE,] %>% 
+  subset(is.na(reply_to_status_id))
+
 reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
 
 tweet_words <- gfg_data %>%
@@ -126,9 +129,39 @@ df.words <- tweet_words %>%
   dplyr::count(word, sort = TRUE) 
 
 
+#####################################
+
+
+tweet_words2 <- organic_tweets %>%
+  dplyr::mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
+                text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
+                text = str_remove_all(text, "[^\x01-\x7F]"),
+                text = str_replace(text, pattern = "cars", replacement = "car")) %>% 
+  unnest_tokens(word, text, token = "tweets") %>%
+  dplyr::filter(!word %in% stop_words$word,
+                !word %in% str_remove_all(stop_words$word, "'"),
+                str_detect(word, "[a-z]"),
+                !str_detect(word, "^#"),
+                !str_detect(word, "^<"),
+                !str_detect(word, "@\\S+"))
+
+
+df.words2 <- tweet_words2 %>%
+  dplyr::count(word, sort = TRUE)
+
+
+
+
+
+#####################################
+
+
+
+
+
 ##### TOP 15 WORDS
 
-dfSentWords <- data.frame(df.words) %>% head(15)
+dfSentWords <- data.frame(df.words2) %>% head(15)
 plotWords <- dfSentWords %>%
   ggplot(aes(y = reorder(word, -n), x = n, fill = as.factor(n))) +
   geom_histogram(stat = "identity", color = "black", cex = 0.25) +
@@ -144,7 +177,8 @@ table.words <- ggtexttable(dfSentWords, rows = NULL,
 
 ##### TOP 40 WORDS
 
-top40 <- data.frame(df.words) %>% head(40)
+top40 <- data.frame(df.words2) %>% 
+  head(40)
 packing <- circleProgressiveLayout(top40$n, sizetype='area')
 packing$radius <- 0.95*packing$radius
 data <- cbind(top40, packing)
@@ -217,14 +251,17 @@ dfTime$weekday <- weekdays(dfTime$created_at) %>%
 
 time <- as.POSIXct(strptime(hms::hms(hours = hour(dfTime$created_at),
   minutes = minute(dfTime$created_at)), "%H:%M"), "UTC")
-x <- as.POSIXct(strptime(c("050000", "105959", "110000", "155959", "160000",  
-                          "185959"), "%H%M%S"), "UTC")
+x <- as.POSIXct(strptime(c("050000", "115959", "120000", "165959", "170000",  
+                          "205959", "210000", "235959", "000000", "045959"), "%H%M%S"), "UTC")
 dfTime$time <- case_when(
   between(time, x[1], x[2]) ~ "morning",
   between(time, x[3], x[4]) ~ "afternoon",
   between(time, x[5], x[6]) ~ "evening",
-  TRUE ~ "night") %>% 
-  factor(levels = c("morning", "afternoon", "evening", "night"))
+  between(time, x[7], x[8]) | between(time, x[9], x[10]) ~ "night",
+  TRUE ~ "NA") %>% 
+  factor(levels = c("morning", "afternoon", "evening", "night", "NA"))
+
+
 
 
 #########################################
@@ -264,7 +301,7 @@ lolli.types <- tweetTypes %>%
   scale_color_manual(values = mypal7) + 
   scale_fill_manual(values = mypal7) +
   xlab(NULL) + ylab(NULL) + 
-  coord_trans(expand = FALSE, ylim = c(0, 16300), xlim=c(0.5, 5.5)) +
+  coord_trans(expand = FALSE, ylim = c(0, 16400), xlim=c(0.5, 5.5)) +
   theme_ipsum_rc(base_size = 9, plot_margin = ggplot2::margin(r = 5, l = 5, t = 10, b = 0), plot_title_size = 10) + 
   theme(legend.position = "none",
         axis.text.x = element_text(size = 13, face="bold", colour = "gray20",
@@ -402,7 +439,7 @@ ttplot <- tweets.text %>% gather(feature, n, -hrs) %>%
 #######################################
 #######################################
 #### TWEETS CLEAN (for databricks) ####
-
+  
 tweets.clean <- gfg_data %>% 
   select(status_id, created_at, user_id, screen_name, text, 
          source, reply_to_status_id, reply_to_user_id, 
