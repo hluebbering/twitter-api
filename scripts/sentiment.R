@@ -1,8 +1,24 @@
+##### LOAD PACKAGES
 library(syuzhet)
 library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(hrbrthemes)
+library(dplyr)
+library(scales)
+library(tibble)
+library(tidytuesdayR)
+library(tidyverse)
+library(ggradar)
+library(viridisLite)
+library(tidyverse)
+library(viridis)
+library(patchwork)
+library(hrbrthemes)
+library(fmsb)
+#library(colormap)
+library(paletteer)
+library(ggridges)
 
 musk.search <- read.csv("dfclean.csv")
 musk.search$created_at = as.POSIXct(musk.search$created_at)
@@ -37,7 +53,7 @@ nrc_sentiment <- read_rds("nrc_sentiment.rds") %>%
 
 #### SENTIMENT ANALYSIS PART 1 ####
 
-library(paletteer)
+
 mypal1 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 9)
 mypal2 <- get_palette(c(paletteer_d("lisa::CyTwombly")), 8)
 mypal3 <- get_palette(c("#001964FF", paletteer_d("fishualize::Coryphaena_hippurus")[1:2], paletteer_d("fishualize::Prionace_glauca")[3:5]), 15)
@@ -141,7 +157,6 @@ plot.sent3 <- ggplot(data = df.sent3, aes(x = Polarity, y = total)) +
 #### RIDGELINE PLOT ####
 
 
-library(ggridges)
 plot.ridges1 <- ggplot(df.sent2A, aes(x = n, y = fct_reorder(sentiment, n), fill = fct_reorder(sentiment, n))) +
   geom_density_ridges(alpha = .85, color = "black", scale = 2.5, rel_min_height = .0001, cex = 0.3) +
   guides(fill = FALSE) +
@@ -174,12 +189,7 @@ plot.ridges2 <- ggplot(df.sent2A, aes(x = n, y = factor(year(created_at), levels
 ######################
 #### RADAR PLOT ####
 
-library(dplyr)
-library(scales)
-library(tibble)
-library(tidytuesdayR)
-library(tidyverse)
-library(ggradar)
+
 
 data2 <- nrc_sentiment %>%
   dplyr::select(created_at, 2:9) %>%
@@ -220,13 +230,7 @@ plotRadar <- data2 %>% ggradar(
 ######################
 #### RADAR PLOT 2 ####
 
-library(viridisLite)
-library(tidyverse)
-library(viridis)
-library(patchwork)
-library(hrbrthemes)
-library(fmsb)
-library(colormap)
+
 
 radarDF2 <- nrc_sentiment %>%
   dplyr::mutate(group = year(created_at)) %>%

@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap');
 
 h1.title {
     font-size: 25pt;
@@ -681,6 +681,51 @@ span.hljs-rkeyword {
     font-weight: 400;
 }
 
+
+
+/* ---- profile card ---- */
+
+.card {
+    background: gray;
+    padding: 12pt;
+    border-radius: 14pt;
+    width: 350pt;
+    z-index: -3 !important;
+    position: relative;
+        background-color: #424a4d;
+    background-image: url(http://api.thumbr.it/whitenoise-361x370.png?background=424a4dff&noise=000000&density=40&opacity=15);
+    box-shadow: 0 0px 2px rgb(0 0 0 / 40%), inset 0 0px 1px rgb(0 0 0 / 30%), 0 1px 2px rgb(0 0 0 / 60%), 0 4px 2px rgb(0 0 0 / 20%), 0 9px 4px rgb(0 0 0 / 10%), inset 0 2px 1px rgb(255 255 255 / 30%);
+}
+
+
+.title {
+    background: -webkit-linear-gradient(45deg, #4af39b, #19c6ff 10%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 18pt;
+    font-family: 'Lato';
+    font-weight: 800;
+}
+
+.user-image {
+    border-radius: 50%;
+    width: 102px !important;
+    height: 102px !important;
+    background: linear-gradient(to left, #743ad5, #d53a9d);
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%);
+}
+
+
+.user-image img {
+  border-radius: 50%;
+    width: 90px !important;
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+    height: 90px !important;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%);
+    margin-top: 4pt;
+    margin-left: 4pt;
+}
 
 
 td.mystyle {
