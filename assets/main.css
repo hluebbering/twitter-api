@@ -88,7 +88,7 @@ h4.date {
 
 body {
     font-family: 'Source Sans Pro', sans-serif;
-    font-size: 11pt;
+    font-size: 11.25pt;
     line-height: 1.4;
     color: #333;
 }
@@ -287,7 +287,7 @@ code {
     text-shadow: 0.6px 0.6px 0 #fff;
     color: #61677c;
     font-family: 'Roboto';
-    font-size: 11px;
+    font-size: 11.25px;
     font-weight: 500;
     letter-spacing: 0.5px;
     box-shadow: 1.125px 1.125px 2.125px #babecc, -1px -1px 2.5px hsl(0deg 0% 98%);
@@ -342,20 +342,20 @@ code {
 }
 
 .datasource2 ol li {
-    font-size: 11pt !important;
+    font-size: 12pt !important;
 }
 
 .datasource2 ol li::before {
   content: counter(cupcake);
     display: inline-flex;
-    width: 16pt;
-    height: 16pt;
+    width: 20pt;
+    height: 20pt;
     border-radius: 20px;
     align-items: center;
     justify-content: center;
     background-color: #ebecf0;
     font-family: 'Roboto';
-    font-size: 10pt;
+    font-size: 12pt;
     font-weight: 600;
     color: hsl(214deg 100% 55%);
     box-shadow: 0.875px 0.875px 1.8px 0 rgb(0 0 0 / 30%), -0.875px -0.875px 1.8px 0 rgb(255 255 255), inset -0.5px -0.5px 1px 0 rgb(0 0 0 / 30%), inset 0.5px 0.5px 1px 0 rgb(255 255 255);
@@ -387,7 +387,7 @@ code {
 .datasource2 li {
     color: #61677c;
     counter-increment: cupcake;
-    font-size: 10pt;
+    font-size: 12pt;
     text-shadow: 0.2px 0.2px 0.2px hsl(227deg 12% 40%);
     font-weight: 300;
     margin: 5pt 2pt;
@@ -687,32 +687,46 @@ span.hljs-rkeyword {
 
 .card {
     background: gray;
-    padding: 12pt;
+    /*padding: 12pt;*/
     border-radius: 14pt;
-    width: 350pt;
+    max-width: 340pt;
     z-index: -3 !important;
     position: relative;
-        background-color: #424a4d;
+        background-color: #2d2d2d;
     background-image: url(http://api.thumbr.it/whitenoise-361x370.png?background=424a4dff&noise=000000&density=40&opacity=15);
     box-shadow: 0 0px 2px rgb(0 0 0 / 40%), inset 0 0px 1px rgb(0 0 0 / 30%), 0 1px 2px rgb(0 0 0 / 60%), 0 4px 2px rgb(0 0 0 / 20%), 0 9px 4px rgb(0 0 0 / 10%), inset 0 2px 1px rgb(255 255 255 / 30%);
+    margin-bottom: 12pt;
+    margin-top: 12pt;
+    float: right;
 }
 
 
 .title {
-    background: -webkit-linear-gradient(45deg, #4af39b, #19c6ff 10%);
+    background-image: url(https://img.freepik.com/fotos-premium/hoja-plata-hoja-brillante_38679-230.jpg?w=2000) !important;
+    background-position: 0% 25%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-size: 18pt;
+    font-size: 14pt;
     font-family: 'Lato';
     font-weight: 800;
+    background-size: 65% !important;
+    filter: drop-shadow(1.25px 1.25px 0.5px black);
+
+}
+
+.cover {
+    height: 130pt;
 }
 
 .user-image {
     border-radius: 50%;
     width: 102px !important;
     height: 102px !important;
-    background: linear-gradient(to left, #743ad5, #d53a9d);
+    background: linear-gradient(90deg, #1d4ed8, #1e40af, #111827);
     box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%);
+    transform: translateY(-70%);
+    margin-left: 6pt;
+
 }
 
 
@@ -727,10 +741,34 @@ span.hljs-rkeyword {
     margin-left: 4pt;
 }
 
+.user-banner {
+    overflow: hidden;
+    position: relative;
+    border-radius: 14pt 14pt 0 0;
+    width: 100%;
+    height: 150px !important;
+    background-size: cover;
+    background-image: url("C:/Users/Hannah Luebbering/OneDrive/Documents/GitHub/twitter-api/assets/banner_image.svg");
+}
+
+
+.info {
+    padding: 7pt 14pt 7pt 14pt;
+}
+
+.username,
+.description,
+.created {
+    color: #aaaaaa;
+    font-family: 'Lato';
+    font-size: 11pt;
+    font-weight: 300;
+}
+
 
 td.mystyle {
     width: 25% !important;
-    padding: 14pt 4pt 14pt 4pt;
+    padding: 20pt 2pt 12pt 2pt;
     text-align: center;
     font-size: 10pt;
     color: hsl(0deg 0% 100% / 80%);
@@ -760,7 +798,7 @@ td.mystyle::after {
     border-radius: 16pt !important;
     margin-left: 22pt !important;
     margin-top: -28pt !important;
-    box-shadow: 0.875px 0.875px 1.8px 0 rgb(0 0 0 / 30%), -0.75px -0.75px 1.5px 0 hsl(216deg 16% 94%), inset -0.5px -0.5px 1px 0 rgb(0 0 0 / 30%), inset 0.5px 0.5px 1px 0 hsl(220deg 23% 95%);
+    box-shadow: 0.875px 0.875px 1.8px 0 rgb(0 0 0 / 30%), -0.75px -0.75px 1.5px 0 hsl(216deg 16% 10%), inset -0.5px -0.5px 1px 0 rgb(0 0 0 / 30%), inset 0.5px 0.5px 1px 0 hsl(220deg 23% 95%);
     background: conic-gradient(#0260C4, #0069D8, #006EF2, #006BEC, #0055A8, #00408A, #004287, #0059BA, #0058B9, #0162CB, #007AF7, #0065D2, #0358B3, #0051A6, #004C98, #0759BC, #0260C4);
     z-index: -2 !important;
     position: absolute;
@@ -768,14 +806,13 @@ td.mystyle::after {
 
 
 td.mystyle2 {
-  width: 25% !important;
-  padding: 4pt;
+  padding: 6pt;
   text-align: center;
-  font-size: 10pt; 
+  font-size: 9pt; 
   letter-spacing: 2px; 
   text-transform: uppercase; 
-  color: rgba(0, 0, 0, 0.6); 
   font-family: 'Lato' !important;
+  color: #eee;
 }
 
 
