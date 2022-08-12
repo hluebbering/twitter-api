@@ -56,11 +56,20 @@ source("scripts/sentiment.R")
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 
 
+
+
+
+
+
+
+
+
+
+## Introduction
+
+
+
 <span class="myhighlight">Overview:</span> The following project aims to programmatically retrieve and analyze all of Elon Musk's tweets from the Twitter API. We compile over 10,000 of Musk's tweets into a comprehensive dataset and perform sentiment analysis for each tweet object.
-
-
-
-
 
 
 
@@ -93,7 +102,6 @@ userDF %>% dplyr::select(-description, -name, -favourites_count) %>%
 
 
 
-## Introduction
 
 
 
@@ -112,7 +120,6 @@ To better understand Musk's Twitter profile, we programmatically retrieve and an
 
 
 
-The first question examines Musk's tweet distribution, which we answer by sorting each tweet into categories (based on tweet types) and ranking each category based on the volume of tweets. Analyzing Musk's nature of engagement, we answer the second question by unpacking tweets containing conversations with and directed to other users. To answer the third question, we investigate Musk's Twitter activity by sorting his feed into different timeframes based on the publish date. Dissecting the topics that predominate his profile feed, we answer the fourth question by examining Musk's most frequently used hashtags and words.
 
 
 
@@ -844,21 +851,24 @@ radarplot <- (myradarChart(radarDF2, colors_border, colors_in, mytitle))
 ------------------------------------
 
 
+
+
 ## Conclusion
 
 
-In this article, I aimed to show how to extract and analyse tweets using the free-to-use programming software R. I hope you found this guide helpful to build your own Twitter Analytics Report that includes:
-
-Showing which tweets worked best and which didn’t
-The ratio of organic tweets/replies/retweets, the time of tweet publication and the platforms from which tweets are published. These are all insights regarding the tweeting behaviour.
-The most frequent words used in the tweets, hashtags, from which accounts most retweets originate and a sentiment analysis capturing the tone of the tweets. These are all insights on the content of the tweets.
 
 
+This project showed how to extract and analyze twitter data using various essential packages in R. The above Twitter analytics report for Elon Musk's tweets covered insights regarding Musk's tweeting behavior, insights on the content of Musk's tweets, and a sentiment analysis capturing the tone of the tweets.
 
+
+The first question examines Musk's tweet distribution, which we answer by sorting each tweet into categories (based on tweet types) and ranking each category based on the volume of tweets. Analyzing Musk's nature of engagement, we answer the second question by unpacking tweets containing conversations with and directed to other users. To answer the third question, we investigate Musk's Twitter activity by sorting his feed into different timeframes based on the publish date. Dissecting the topics that predominate his profile feed, we answer the fourth question by examining Musk's most frequently used hashtags and words.
 
 
 
-------------------------------------
+
+
+
+\ 
 
 
 
