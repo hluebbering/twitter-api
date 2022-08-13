@@ -219,6 +219,15 @@ a.navbar-brand {
 
 /* ---- tables ---- */
 
+table.gt_table {
+    margin: 10pt;
+    font-size: 10pt !important;
+    font-family: 'Roboto Condensed';
+    box-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
+    line-height: 2pt;
+}
+
+
 .table {
     box-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
 }
@@ -706,7 +715,7 @@ span.hljs-rkeyword {
     background-position: 0% 25%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-size: 14pt;
+    font-size: 12pt;
     font-family: 'Lato';
     font-weight: 800;
     background-size: 65% !important;
@@ -752,22 +761,48 @@ span.hljs-rkeyword {
 }
 
 
+span.username {
+    font-family: 'Roboto';
+    font-weight: 300;
+    font-size: 10pt;
+    margin: 0px 0pt 0px 2pt;
+    -webkit-text-fill-color: #466eeb;
+    filter: none !important;
+}
+
 .info {
     padding: 7pt 14pt 7pt 14pt;
 }
+
+.description {
+    font-family: 'Roboto Condensed' !important;
+    font-weight: 300;
+}
+
 
 .username,
 .description,
 .created {
     color: #aaaaaa;
     font-family: 'Lato';
-    font-size: 11pt;
+    font-size: 10.25pt !important;
     font-weight: 300;
 }
 
+.created::before {
+  content: "";
+    width: 9pt;
+    height: 10pt;
+    display: inline-flex;
+    background-image: url("C:/Users/Hannah Luebbering/OneDrive/Documents/GitHub/twitter-api/assets/static/calander.png") !important;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    filter: drop-shadow(1.5px 1.5px 1px black);
+}
 
 td.mystyle {
-    width: 25% !important;
+    width: 28% !important;
     padding: 20pt 2pt 12pt 2pt;
     text-align: center;
     font-size: 10pt;
@@ -781,7 +816,7 @@ td.mystyle::before {
     width: 44pt;
     height: 30pt;
     border-radius: 10pt !important;
-    margin-left: 28pt !important;
+    margin-left: 16pt !important;
     margin-top: -8pt !important;
     text-shadow: 0 0 2.5px #000000, 1px 1px 1px rgb(0 0 0);
     box-shadow: 0.875px 0.875px 1.8px 0 hsl(0deg 0% 0% / 30%), inset -0.875px -0.875px 1.8px 0 hsl(0deg 0% 0%), inset -0.5px -0.5px 1px 0 hsl(227deg 12% 38%), inset 0.5px 0.5px 1px 0 hsl(227deg 12% 45%);
@@ -796,7 +831,7 @@ td.mystyle::after {
     width: 56pt;
     height: 42pt;
     border-radius: 16pt !important;
-    margin-left: 22pt !important;
+    margin-left: 10pt !important;
     margin-top: -28pt !important;
     box-shadow: 0.875px 0.875px 1.8px 0 rgb(0 0 0 / 30%), -0.75px -0.75px 1.5px 0 hsl(216deg 16% 10%), inset -0.5px -0.5px 1px 0 rgb(0 0 0 / 30%), inset 0.5px 0.5px 1px 0 hsl(220deg 23% 95%);
     background: conic-gradient(#0260C4, #0069D8, #006EF2, #006BEC, #0055A8, #00408A, #004287, #0059BA, #0058B9, #0162CB, #007AF7, #0065D2, #0358B3, #0051A6, #004C98, #0759BC, #0260C4);
@@ -806,13 +841,14 @@ td.mystyle::after {
 
 
 td.mystyle2 {
-  padding: 6pt;
-  text-align: center;
-  font-size: 9pt; 
-  letter-spacing: 2px; 
-  text-transform: uppercase; 
-  font-family: 'Lato' !important;
-  color: #eee;
+      padding: 6pt 0 6pt 0;
+    text-align: center;
+    font-size: 8.75pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Roboto';
+    font-family: 'Lato';
+    color: #eee;
 }
 
 
